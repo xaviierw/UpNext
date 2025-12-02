@@ -2,6 +2,7 @@
 import "./App.css";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import Home from "./pages/Home";
 import Personalize from "./pages/Personalize";
 import NotFound from "./pages/NotFound";
 import { Routes, Route, Navigate } from "react-router"
@@ -14,9 +15,9 @@ const ProtectedRoute = ({ children}) => {
 function App() {
   return (
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>}/>
         <Route path="/personalize" element={<ProtectedRoute><Personalize /></ProtectedRoute>}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
