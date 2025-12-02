@@ -80,10 +80,63 @@ function authenticateToken(req, res, next) {
 }
 
 // --- Protected route example ---
+// --- Get current user for personalize page ---
 app.get("/api/personalize", authenticateToken, async (req, res) => {
-  const user = await User.findById(req.user.userId).select("-password");
-  res.json({ user });
+  try {
+    const userId = req.user.userId; // from jwt.sign({ userId, email })
+
+    const user = await User.findById(userId).select(
+      "email personalized eventTypes eventCategories"
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
+
+app.post("/api/personalize", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { eventTypes, eventCategories } = req.body;
+
+    if (!Array.isArray(eventTypes) || !Array.isArray(eventCategories)) {
+      return res.status(400).json({ message: "Invalid preferences format" });
+    }
+
+    if (eventTypes.length > 2 || eventCategories.length > 3) {
+      return res.status(400).json({ message: "Too many preferences selected" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        personalized: true,
+        eventTypes,
+        eventCategories,
+      },
+      { new: true }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      message: "Preferences saved successfully",
+      user,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`API listening on ${port}`));

@@ -37,7 +37,7 @@ const Register = () => {
   }
 
   return (
-    <div>
+    <div class="registerForm">
       <h2>Register</h2>
 
       {message ? <p>{message}</p> : null}
