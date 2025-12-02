@@ -56,7 +56,9 @@ app.post("/api/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({ token });
+    res.json({ 
+      token, 
+      personalized: user.personalized });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -78,7 +80,7 @@ function authenticateToken(req, res, next) {
 }
 
 // --- Protected route example ---
-app.get("/api/dashboard", authenticateToken, async (req, res) => {
+app.get("/api/personalize", authenticateToken, async (req, res) => {
   const user = await User.findById(req.user.userId).select("-password");
   res.json({ user });
 });

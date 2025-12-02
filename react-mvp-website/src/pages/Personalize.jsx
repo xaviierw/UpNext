@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
-const Dashboard = () => {
+const Personalize = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch("http://localhost:4000/api/dashboard", {
+    fetch("http://localhost:4000/api/personalize", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())
@@ -18,10 +18,9 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h2>Dashboard</h2>
       <p>Welcome, {user.email}!</p>
     </div>
   );
 };
 
-export default Dashboard;
+export default Personalize;
