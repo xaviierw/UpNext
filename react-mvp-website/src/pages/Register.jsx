@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 
 const Register = () => {
   const [email, setEmail] = useState("");
+  const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Register = () => {
       const res = await fetch("http://localhost:4000/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, username, password }),
       });
 
       const data = await res.json();
@@ -27,6 +28,7 @@ const Register = () => {
 
       setMessage("Registration successful! Redirecting to login..");
       setEmail("");
+      setUserName("");
       setPassword("");
       setTimeout(() => {
         navigate("/login");
@@ -46,6 +48,11 @@ const Register = () => {
         <div>
           <label>Email:</label><br />
           <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required/>
+        </div>
+
+        <div>
+          <label>Username:</label><br />
+          <input type="text" value={username} onChange={(event) => setUserName(event.target.value)} required/>
         </div>
 
         <div>
