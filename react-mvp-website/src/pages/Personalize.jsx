@@ -97,7 +97,7 @@ useEffect(() => {
 
   return (
     <div className="container text-center mt-4">
-      <p>Welcome, {user.email}!</p>
+      <p>Welcome, {user.username}!</p>
 
       {step === 1 && (
         <>

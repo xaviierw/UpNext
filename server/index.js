@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import "dotenv/config.js";
-
 import User from "./models/User.js";
 
 const app = express();
@@ -21,7 +20,7 @@ mongoose
 // --- Register ---
 app.post("/api/register", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, username, password } = req.body;
 
     const existing = await User.findOne({ email });
     if (existing) {
@@ -29,7 +28,7 @@ app.post("/api/register", async (req, res) => {
     }
 
     const hashed = await bcrypt.hash(password, 10);
-    const user = new User({ email, password: hashed });
+    const user = new User({ email, username, password: hashed });
     await user.save();
 
     res.status(201).json({ message: "User registered" });
@@ -51,7 +50,7 @@ app.post("/api/login", async (req, res) => {
     if (!ok) return res.status(401).json({ message: "Invalid credentials" });
 
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id, email: user.email, username: user.username },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -86,7 +85,7 @@ app.get("/api/personalize", authenticateToken, async (req, res) => {
     const userId = req.user.userId; // from jwt.sign({ userId, email })
 
     const user = await User.findById(userId).select(
-      "email personalized eventTypes eventCategories"
+      "email personalized username eventTypes eventCategories"
     );
 
     if (!user) {
