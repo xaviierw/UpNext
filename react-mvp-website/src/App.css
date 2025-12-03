@@ -35,4 +35,51 @@
   background-color: #e4c2ff;
 }
 
+.me-auto {
+  text-align: right;
+}
+
+.custom-nav .nav-link {
+  color: black
+}
+
+.custom-nav:hover {
+  color: grey
+}
+
+.custom-collapse {
+  background-color: #e3e3e3;
+}
+
+.custom-collapse:hover {
+  color: grey;
+}
+
+.nav-logo {
+  height: 40px;
+  width: auto;
+}
+
+.nav-search-wrapper {
+  max-width: 500px;
+}
+
+.nav-search-input {
+  width: 100%;
+}
+
+@media (max-width: 991.98px) {
+  .nav-search-wrapper {
+    width: 100%;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.custom-nav .nav-link,
+#profile-dropdown .dropdown-item {
+  color: #000 !important;
+}
+
+
 

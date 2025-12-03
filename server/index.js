@@ -1,4 +1,3 @@
-// server/index.js
 import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
@@ -11,13 +10,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// --- connect to MongoDB ---
+// connect to MongoDB 
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.error("MongoDB connection error:", err));
 
-// --- Register ---
+// Register 
 app.post("/api/register", async (req, res) => {
   try {
     const { email, username, password } = req.body;
@@ -38,7 +37,7 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-// --- Login ---
+// Login
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -64,7 +63,7 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// --- Auth middleware ---
+// Auth middleware
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -73,16 +72,15 @@ function authenticateToken(req, res, next) {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
     if (err) return res.sendStatus(403);
-    req.user = payload; // { userId, email }
+    req.user = payload;
     next();
   });
 }
 
-// --- Protected route example ---
-// --- Get current user for personalize page ---
+// Protected route
 app.get("/api/personalize", authenticateToken, async (req, res) => {
   try {
-    const userId = req.user.userId; // from jwt.sign({ userId, email })
+    const userId = req.user.userId;
 
     const user = await User.findById(userId).select(
       "email personalized username eventTypes eventCategories"
