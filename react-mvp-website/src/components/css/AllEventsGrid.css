@@ -1,0 +1,21 @@
+/* Match the width + centering of the carousel */
+.all-events-wrapper {
+  width: 100%;
+  max-width: 1000px;   /* same as event-carousel-wrapper */
+  margin: 0 auto;
+}
+
+/* Neat responsive grid */
+.all-events-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-start;  /* cards start from the same left edge */
+}
+
+/* Optional: adjust spacing on larger screens */
+@media (min-width: 992px) {
+  .all-events-grid {
+    gap: 20px;
+  }
+}

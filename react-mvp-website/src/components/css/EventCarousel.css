@@ -1,0 +1,17 @@
+.event-carousel-wrapper {
+  width: 100%;
+  max-width: 1000px;          
+  margin: 0 auto;             
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.event-carousel-track {
+  display: flex;
+  gap: 16px;
+  padding: 4px 4px 12px;
+}
+
+.event-carousel-item {
+  flex: 0 0 260px;           
+}
