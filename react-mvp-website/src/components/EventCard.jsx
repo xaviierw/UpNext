@@ -8,12 +8,11 @@ const EventCard = ({
   eventDate = "<date here>",
   title = "<Event Name>",
   tags = [],
+  onClick,
 }) => {
   return (
-    <Card className="event-card shadow-sm" style={{ borderRadius: "12px" }}>
-      <Badge className="days-left-badge" bg="primary">
-        {daysLeft}
-      </Badge>
+    <Card className="event-card shadow-sm" style={{ borderRadius: "12px" }} onClick={onClick} role="button">
+      <Badge className="days-left-badge" bg="primary">{daysLeft}</Badge>
 
       <div className="event-card-img-wrapper">
         {image ? (
@@ -30,9 +29,7 @@ const EventCard = ({
       </div>
 
       <Card.Body className="event-card-body">
-        <p className="small text-muted mb-1">
-          Registration Deadline: {regDeadline}
-        </p>
+        <p className="small text-muted mb-1">Registration Deadline: {regDeadline}</p>
         <p className="small text-muted mb-2">Event Date: {eventDate}</p>
         <h5 className="fw-bold mb-3">{title}</h5>
 
@@ -41,9 +38,7 @@ const EventCard = ({
             <span className="tags-pill">Tags</span>
             <div className="tags-tooltip">
               {tags.map((tag, idx) => (
-                <div key={idx} className="tooltip-tag">
-                  {tag}
-                </div>
+                <div key={idx} className="tooltip-tag">{tag}</div>
               ))}
             </div>
           </div>

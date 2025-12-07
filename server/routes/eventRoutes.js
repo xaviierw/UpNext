@@ -20,6 +20,39 @@ router.get("/events", authenticateToken, async (req, res) => {
   }
 });
 
+// GET event by ID
+router.get("/events/:id", authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid event ID",
+      });
+    }
+
+    const event = await Event.findById(id);
+
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found"
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      event,
+    });
+  } catch (error) {
+    console.error("Error fetching event by ID: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retreive event",
+    });
+  }
+});
+
 // GET personalized events
 router.get("/events/personalized", authenticateToken, async (req, res) => {
   try {

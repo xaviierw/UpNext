@@ -73,6 +73,7 @@ const Home = () => {
           <AllEventsGrid events={allEvents} />
         )}
       </div>
+      <br></br>
     </div>
   );
 };

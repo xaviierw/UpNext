@@ -63,8 +63,7 @@
   font-size: 10px;
 }
 
-/* hidden by default */
-.tags-tooltip {
+.tags-tooltip { /* Tag tool tip for the event category, hidden by default */
   display: none;
   position: absolute;
   bottom: 110%;
@@ -87,8 +86,7 @@
   padding: 4px 0;
 }
 
-/* show on hover */
-.tags-tooltip-wrapper:hover .tags-tooltip {
+.tags-tooltip-wrapper:hover .tags-tooltip { /* Show on hover */
   display: block;
   opacity: 1;
   transform: translateY(0);

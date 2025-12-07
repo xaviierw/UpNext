@@ -2,6 +2,7 @@ import EventCard from "./EventCard";
 import "./css/EventCarousel.css";
 
 const EventCarousel = ({ events = [] }) => {
+
   const calculateDaysLeft = (deadline) => {
     if (!deadline) return "N/A";
     const today = new Date();
@@ -12,10 +13,14 @@ const EventCarousel = ({ events = [] }) => {
     return `${diffDays} Days left`;
   };
 
+  const handleEventClick = (id) => {
+    console.log("Event has been clicked", id);
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "—";
     return new Date(dateString).toLocaleDateString("en-SG", {day: "2-digit", month: "short", year: "numeric",});
-    };
+  };
 
   if (!events.length) {
     return <p className="text-muted text-center">No personalised events yet.</p>;
@@ -25,9 +30,12 @@ const EventCarousel = ({ events = [] }) => {
     <div className="event-carousel-wrapper">
       <div className="event-carousel-track">
         {events.map((event) => (
-          <div className="event-carousel-item" key={event._id}>
-            <EventCard
+          <EventCard
+              key={event._id}
+              onClick={() => handleEventClick(event._id)}
+
               daysLeft={calculateDaysLeft(event.registrationDeadline)}
+
               regDeadline={formatDate(event.registrationDeadline)}
 
               eventDate={formatDate(event.startDateTime)}
@@ -38,7 +46,6 @@ const EventCarousel = ({ events = [] }) => {
 
               tags={[event.eventCategories, ...event.eventTypes || []].filter(Boolean)}
             />
-          </div>
         ))}
       </div>
     </div>

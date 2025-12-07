@@ -2,6 +2,7 @@ import EventCard from "./EventCard";
 import "./css/AllEventsGrid.css";
 
 const AllEventsGrid = ({ events = [] }) => {
+
   const calculateDaysLeft = (deadline) => {
     if (!deadline) return "N/A";
     const today = new Date();
@@ -12,19 +13,17 @@ const AllEventsGrid = ({ events = [] }) => {
     return `${diffDays} Days left`;
   };
 
+  const handleEventClick = (id) => {
+    console.log("Event has been clicked", id);
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "—";
-    return new Date(dateString).toLocaleDateString("en-SG", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    return new Date(dateString).toLocaleDateString("en-SG", {day: "2-digit", month: "short", year: "numeric",});
   };
 
   if (!events.length) {
-    return (
-      <p className="text-center text-muted">No events available.</p>
-    );
+    return <p className="text-center text-muted">No events available.</p>
   }
 
   return (
@@ -33,15 +32,18 @@ const AllEventsGrid = ({ events = [] }) => {
         {events.map((event) => (
           <EventCard
             key={event._id}
+            onClick={() => handleEventClick(event._id)}
+            
             daysLeft={calculateDaysLeft(event.registrationDeadline)}
-            image={event.imageURL}
             regDeadline={formatDate(event.registrationDeadline)}
-            eventDate={formatDate(event.startDateTime)}
+
+            eventDate={formatDate(Event.startDateTime)}
+
+            image={event.imageURL}
+
             title={event.title}
-            tags={[
-              event.eventCategories,
-              ...(event.eventTypes || []),
-            ].filter(Boolean)}
+
+            tags={[event.eventCategories, ...(event.eventTypes || []),].filter(Boolean)}
           />
         ))}
       </div>
