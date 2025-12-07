@@ -1,3 +1,5 @@
+import "./EventBox.css";
+
 const EventBox = ({ icon, label, selected, onClick }) => {
   return (
     <div

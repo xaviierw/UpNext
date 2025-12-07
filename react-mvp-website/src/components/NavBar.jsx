@@ -1,5 +1,5 @@
 import { Navbar, Nav, Container, Form, FormControl, NavDropdown } from "react-bootstrap"
-import { Link } from "react-router"   // keep as-is for your setup
+import { Link } from "react-router"   
 
 const NavBar = () => {
   return (
