@@ -1,0 +1,95 @@
+.event-card {
+  width: 280px;
+  border: 2px solid #e3e3e3;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.event-card:hover {
+  border-color: #e4c2ff;
+  transform: translateY(-3px);
+  transition: 0.2s ease;
+}
+
+.days-left-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: black;
+  border-radius: 12px;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.event-card-img-wrapper {
+  height: 150px;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 2px solid #e3e3e3;
+}
+
+.event-card-placeholder {
+  font-size: 32px;
+  color: #bbb;
+}
+
+.tag-badge {
+  background-color: #dedede !important;
+  color: black !important;
+  padding: 5px 10px;
+  border-radius: 12px;
+}
+
+.tags-tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tags-pill {
+  background: #dedede;
+  color: black;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.tags-pill::after {
+  content: " ▾";
+  font-size: 10px;
+}
+
+/* hidden by default */
+.tags-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 110%;
+  left: 0;
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 10;
+  min-width: 140px;
+
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.tooltip-tag {
+  font-size: 12px;
+  padding: 4px 0;
+}
+
+/* show on hover */
+.tags-tooltip-wrapper:hover .tags-tooltip {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}

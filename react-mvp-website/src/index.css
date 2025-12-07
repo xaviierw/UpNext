@@ -2,5 +2,21 @@
 body {
   margin: 0;
   background-color: #ffffff;
-  padding: 0;
+  padding-top: 80px;
+  padding-left: 20px;
 }
+
+html, body, #root {
+  height: 100%;
+}
+
+#root > div {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.upnext-footer {
+  margin-top: auto;
+}
+
