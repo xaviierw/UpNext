@@ -8,7 +8,10 @@ const router = express.Router();
 // GET all events
 router.get("/events", authenticateToken, async (req, res) => {
   try {
-    const events = await Event.find().sort({ startDateTime: 1 });
+    const today = new Date();
+    const events = await Event.find({
+        registrationDeadline: {$gte: today}
+    }).sort({ startDateTime: 1 });
 
     res.json({ success: true, events });
   } catch (err) {
@@ -21,7 +24,6 @@ router.get("/events", authenticateToken, async (req, res) => {
 router.get("/events/personalized", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
-
     const user = await User.findById(userId).select(
       "eventTypes eventCategories personalized"
     );
@@ -42,8 +44,12 @@ router.get("/events/personalized", authenticateToken, async (req, res) => {
       }
       if (orConditions.length > 0) query = { $or: orConditions };
     }
+    const today = new Date();
 
-    const events = await Event.find(query).sort({ startDateTime: 1 });
+    const events = await Event.find({
+        ...query,
+        registrationDeadline: {$gte:today}
+    }).sort({ startDateTime: 1 });
 
     res.json({ success: true, events });
   } catch (err) {

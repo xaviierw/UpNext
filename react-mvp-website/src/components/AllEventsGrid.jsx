@@ -1,5 +1,5 @@
 import EventCard from "./EventCard";
-import "./AllEventsGrid.css";
+import "./css/AllEventsGrid.css";
 
 const AllEventsGrid = ({ events = [] }) => {
   const calculateDaysLeft = (deadline) => {

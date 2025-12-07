@@ -73,7 +73,6 @@ const Home = () => {
           <AllEventsGrid events={allEvents} />
         )}
       </div>
-      <Footer />
     </div>
   );
 };

@@ -1,6 +1,12 @@
 import { Navbar, Nav, Container, Form, FormControl, NavDropdown } from "react-bootstrap"
 import { Link } from "react-router"   
 
+const handleLogout = () => {
+  localStorage.removeItem("token");   
+  localStorage.removeItem("username"); 
+  window.location.href = "/login";     
+};
+
 const NavBar = () => {
   return (
     <Navbar bg="light" expand="lg" fixed="top" className="shadow-sm">
@@ -31,7 +37,7 @@ const NavBar = () => {
               <NavDropdown.Item as={Link} to="/account">My Account</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/settings">Settings</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item as={Link} to="/logout">Logout</NavDropdown.Item>
+              <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

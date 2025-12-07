@@ -1,5 +1,5 @@
 import { Card, Badge } from "react-bootstrap";
-import "./EventCard.css";
+import "./css/EventCard.css";
 
 const EventCard = ({
   daysLeft = "xx Days left",

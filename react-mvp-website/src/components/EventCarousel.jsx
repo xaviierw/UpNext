@@ -1,5 +1,5 @@
 import EventCard from "./EventCard";
-import "./EventCarousel.css";
+import "./css/EventCarousel.css";
 
 const EventCarousel = ({ events = [] }) => {
   const calculateDaysLeft = (deadline) => {
