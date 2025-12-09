@@ -1,7 +1,11 @@
 import EventCard from "./EventCard";
 import "./css/AllEventsGrid.css";
+import { useNavigate } from "react-router";
 
 const AllEventsGrid = ({ events = [] }) => {
+
+  const navigate = useNavigate();
+
   const calculateDaysLeft = (deadline) => {
     if (!deadline) return "N/A";
     const today = new Date();
@@ -10,6 +14,10 @@ const AllEventsGrid = ({ events = [] }) => {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     if (diffDays < 0) return "Closed";
     return `${diffDays} Days left`;
+  };
+
+  const handleClick = (eventId) => {
+    navigate(`/event/${eventId}/details`);
   };
 
   const formatDate = (dateString) => {
@@ -33,10 +41,14 @@ const AllEventsGrid = ({ events = [] }) => {
         {events.map((event) => (
           <EventCard
             key={event._id}
+            onClick={() => handleClick(event._id)}
+
             daysLeft={calculateDaysLeft(event.registrationDeadline)}
             image={event.imageURL}
+
             regDeadline={formatDate(event.registrationDeadline)}
             eventDate={formatDate(event.startDateTime)}
+
             title={event.title}
             tags={[
               event.eventCategories,

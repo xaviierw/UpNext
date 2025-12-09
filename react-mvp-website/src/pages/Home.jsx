@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import NavBar from "../components/NavBar";
 import EventCarousel from "../components/EventCarousel";
 import AllEventsGrid from "../components/AllEventsGrid";
-import Footer from "../components/Footer";
 
 const Home = () => {
   const [personalizedEvents, setPersonalizedEvents] = useState([]);
