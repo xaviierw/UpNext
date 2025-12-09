@@ -17,7 +17,7 @@ const EventCarousel = ({ events = [] }) => {
   };
 
   const handleClick = (eventId) => {
-    navigate(`/event/${eventId}/details`);
+    navigate(`/event/${eventId}`);
   };
 
   const formatDate = (dateString) => {

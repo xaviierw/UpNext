@@ -20,7 +20,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>}/>
         <Route path="/personalize" element={<ProtectedRoute><Personalize /></ProtectedRoute>}/>
-        <Route path="/event/:id/:tab" element={<ProtectedRoute><Event /></ProtectedRoute>}/>
+        <Route path="/event/:id" element={<ProtectedRoute><Event /></ProtectedRoute>}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
   );
