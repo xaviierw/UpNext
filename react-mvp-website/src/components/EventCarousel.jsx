@@ -42,7 +42,7 @@ const EventCarousel = ({ events = [] }) => {
               eventDate={formatDate(event.startDateTime)}
 
               image={event.imageURL}
-
+              capacity={event.capacity}
               title={event.title}
 
               tags={[event.eventCategories, ...event.eventTypes || []].filter(Boolean)}

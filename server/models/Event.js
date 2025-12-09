@@ -21,6 +21,7 @@ const eventSchema = new mongoose.Schema(
     registrationRequired: Boolean,
     status: Number,
     registrationDeadline: Date
+    
   },
   { timestamps: true }
 );

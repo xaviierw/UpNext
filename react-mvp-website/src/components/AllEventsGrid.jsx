@@ -45,6 +45,7 @@ const AllEventsGrid = ({ events = [] }) => {
 
             daysLeft={calculateDaysLeft(event.registrationDeadline)}
             image={event.imageURL}
+            capacity={event.capacity}
 
             regDeadline={formatDate(event.registrationDeadline)}
             eventDate={formatDate(event.startDateTime)}
