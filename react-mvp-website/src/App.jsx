@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Personalize from "./pages/Personalize";
 import NotFound from "./pages/NotFound";
+import Event from "./pages/Event";
 import { Routes, Route, Navigate } from "react-router"
 
 const ProtectedRoute = ({ children}) => {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>}/>
         <Route path="/personalize" element={<ProtectedRoute><Personalize /></ProtectedRoute>}/>
+        <Route path="/event/:id" element={<ProtectedRoute><Event /></ProtectedRoute>}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
   );

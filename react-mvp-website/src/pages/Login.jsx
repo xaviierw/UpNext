@@ -35,11 +35,18 @@ const Login = () => {
     } catch (err) {
       setMessage("Server error. Try again later.");
     }
+
+    setMessage("Login successful! Redirecting...");
+    setEmail("");
+    setPassword("");
   }
 
   return (
+
     <div class="loginForm">
       <h2>Login</h2>
+
+      {message ? <p>{message}</p> : null}
 
       <form onSubmit={handleLogin}>
         <div>

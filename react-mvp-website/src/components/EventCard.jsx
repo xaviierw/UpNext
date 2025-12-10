@@ -8,9 +8,12 @@ const EventCard = ({
   eventDate = "<date here>",
   title = "<Event Name>",
   tags = [],
+  capacity = "<slots left>",
+  onClick,
 }) => {
+  
   return (
-    <Card className="event-card shadow-sm" style={{ borderRadius: "12px" }}>
+    <Card className="event-card shadow-sm" style={{ borderRadius: "12px" }} onClick={onClick}>
       <Badge className="days-left-badge" bg="primary">
         {daysLeft}
       </Badge>
@@ -30,10 +33,9 @@ const EventCard = ({
       </div>
 
       <Card.Body className="event-card-body">
-        <p className="small text-muted mb-1">
-          Registration Deadline: {regDeadline}
-        </p>
+        <p className="small text-muted mb-1">Registration Deadline: {regDeadline}</p>
         <p className="small text-muted mb-2">Event Date: {eventDate}</p>
+        <p className="small text-muted mb-2">Slots Left: {capacity}</p>
         <h5 className="fw-bold mb-3">{title}</h5>
 
         {tags.length > 0 && (
