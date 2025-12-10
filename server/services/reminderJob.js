@@ -9,7 +9,7 @@ export const startThreeDayReminderJob = () => {
   console.log("3-day reminder job initialized (SGT).");
 
   cron.schedule(
-    "* * * * *",
+    "0 9 * * *",
     async () => {
       try {
         const now = new Date();

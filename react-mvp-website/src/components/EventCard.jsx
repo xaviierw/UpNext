@@ -11,6 +11,7 @@ const EventCard = ({
   capacity = "<slots left>",
   onClick,
 }) => {
+  
   return (
     <Card className="event-card shadow-sm" style={{ borderRadius: "12px" }} onClick={onClick}>
       <Badge className="days-left-badge" bg="primary">
