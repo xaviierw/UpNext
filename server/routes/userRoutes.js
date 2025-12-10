@@ -90,7 +90,7 @@ router.get("/me", authenticateToken, async (req, res) => {
   }
 });
 
-router.patch("/registrations/:id/preferences", authenticateToken, async (req, res) => {
+router.put("/registrations/:id/preferences", authenticateToken, async (req, res) => {
     const { id } = req.params;
     const userId = req.user.userId; 
     const { wantsEmailReminder, wantsInAppReminder } = req.body;
@@ -141,6 +141,60 @@ router.patch("/registrations/:id/preferences", authenticateToken, async (req, re
       return res.status(500).json({
         success: false,
         message: "Server error while updating preferences.",
+      });
+    }
+  }
+);
+
+router.get("/registrations/me", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const registrations = await EventRegistration.find({ user: userId })
+      .populate("event")              
+      .sort({ createdAt: -1 });
+
+    return res.json({
+      success: true,
+      registrations,
+    });
+
+  } catch (err) {
+    console.error("Error fetching registrations:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch event registrations",
+    });
+  }
+});
+
+router.put("/registrations/:id/cancel", authenticateToken, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user.id || req.user._id || req.user.userId;
+
+      const reg = await EventRegistration.findOneAndUpdate(
+        { _id: id, user: userId },       
+        { status: 2 },                   
+        { new: true }
+      );
+
+      if (!reg) {
+        return res.status(404).json({
+          success: false,
+          message: "Registration not found or not yours",
+        });
+      }
+
+      res.json({
+        success: true,
+        registration: reg,
+      });
+    } catch (err) {
+      console.error("Error cancelling registration:", err);
+      res.status(500).json({
+        success: false,
+        message: "Failed to cancel registration",
       });
     }
   }

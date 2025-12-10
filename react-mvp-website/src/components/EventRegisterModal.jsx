@@ -98,7 +98,7 @@ const EventRegisterModal = ({ show, onHide, event }) => {
     } try {
       setSavingPrefs(true);
       const res = await fetch(`http://localhost:4000/api/registrations/${registration._id}/preferences`,{
-          method: "PATCH",
+          method: "PUT",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`,},
           body: JSON.stringify({ wantsEmailReminder: emailOptIn, wantsInAppReminder: inAppOptIn, }),
         }
