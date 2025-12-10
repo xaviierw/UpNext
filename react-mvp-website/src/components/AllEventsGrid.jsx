@@ -17,16 +17,13 @@ const AllEventsGrid = ({ events = [] }) => {
   };
 
   const handleClick = (eventId) => {
-    navigate(`/event/${eventId}/details`);
+    navigate(`/event/${eventId}`);
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return "—";
-    return new Date(dateString).toLocaleDateString("en-SG", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    return new Date(dateString).toLocaleDateString("en-SG", {day: "2-digit", month: "short", year: "numeric",}
+    );
   };
 
   if (!events.length) {

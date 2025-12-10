@@ -8,20 +8,12 @@ const Event = () => {
   const { id } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showRegisterModal, setShowRegisterModal] = useState(false); // 👈
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
 
   const formatDate = (date) =>
     date
-      ? new Date(date).toLocaleString("en-SG", {
-          timeZone: "UTC",
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        })
-      : "TBA";
+      ? new Date(date).toLocaleString("en-SG", {day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,}
+      ) : "TBA";
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -115,7 +107,7 @@ const Event = () => {
                 <Button
                   variant="primary"
                   className="w-100 rounded-pill mt-3"
-                  onClick={() => setShowRegisterModal(true)} // 👈 open modal
+                  onClick={() => setShowRegisterModal(true)}
                 >
                   Register Now!
                 </Button>
