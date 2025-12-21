@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import User from "../models/User.js";
 import EventRegistration from "../models/EventRegistration.js";
+import Event from "../models/Event.js";
 import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -90,7 +91,7 @@ router.get("/me", authenticateToken, async (req, res) => {
   }
 });
 
-router.patch("/registrations/:id/preferences", authenticateToken, async (req, res) => {
+router.put("/registrations/:id/preferences", authenticateToken, async (req, res) => {
     const { id } = req.params;
     const userId = req.user.userId; 
     const { wantsEmailReminder, wantsInAppReminder } = req.body;
@@ -145,5 +146,65 @@ router.patch("/registrations/:id/preferences", authenticateToken, async (req, re
     }
   }
 );
+
+router.get("/registrations/me", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const registrations = await EventRegistration.find({ user: userId })
+      .populate("event")              
+      .sort({ createdAt: -1 });
+
+    return res.json({
+      success: true,
+      registrations,
+    });
+
+  } catch (err) {
+    console.error("Error fetching registrations:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch event registrations",
+    });
+  }
+});
+
+router.put("/registrations/:id/cancel", authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id || req.user._id || req.user.userId;
+
+    const reg = await EventRegistration.findOneAndUpdate(
+      { _id: id, user: userId },
+      { status: 2 },
+      { new: true }
+    );
+
+    if (!reg) {
+      return res.status(404).json({
+        success: false,
+        message: "Registration not found or not yours",
+      });
+    }
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      reg.event,
+      { $inc: { capacity: 1 } },
+      { new: true }
+    );
+
+    res.json({
+      success: true,
+      registration: reg,
+      updatedEvent,
+    });
+  } catch (err) {
+    console.error("Error cancelling registration:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to cancel registration",
+    });
+  }
+});
 
 export default router;

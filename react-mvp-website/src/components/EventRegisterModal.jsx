@@ -18,7 +18,6 @@ const EventRegisterModal = ({ show, onHide, event }) => {
   // Load current user info when modal opens
   useEffect(() => {
     if (!show) {
-      // reset when modal is closed
       setStep(1);
       setUser(null);
       setRegistration(null);
@@ -80,7 +79,6 @@ const EventRegisterModal = ({ show, onHide, event }) => {
 
       // store registration so we know which one to update
       setRegistration(data.registration);
-      // move to success + preferences step
       setStep(3);
     } catch (err) {
       console.error("Failed to register:", err);
@@ -98,7 +96,7 @@ const EventRegisterModal = ({ show, onHide, event }) => {
     } try {
       setSavingPrefs(true);
       const res = await fetch(`http://localhost:4000/api/registrations/${registration._id}/preferences`,{
-          method: "PATCH",
+          method: "PUT",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`,},
           body: JSON.stringify({ wantsEmailReminder: emailOptIn, wantsInAppReminder: inAppOptIn, }),
         }
