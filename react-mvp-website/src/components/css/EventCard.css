@@ -63,7 +63,6 @@
   font-size: 10px;
 }
 
-/* hidden by default */
 .tags-tooltip {
   display: none;
   position: absolute;
@@ -87,7 +86,6 @@
   padding: 4px 0;
 }
 
-/* show on hover */
 .tags-tooltip-wrapper:hover .tags-tooltip {
   display: block;
   opacity: 1;
