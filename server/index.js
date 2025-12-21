@@ -8,6 +8,7 @@ import { startThreeDayReminderJob } from "./services/reminderJob.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ mongoose
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", eventRoutes);
+app.use("/api", notificationRoutes);
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`API listening on ${port}`));
