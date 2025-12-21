@@ -1,4 +1,3 @@
-// src/pages/Manage.jsx
 import { useEffect, useState } from "react";
 import { Container, Table, Spinner, Alert, Badge, Button } from "react-bootstrap";
 import { Link } from "react-router";
@@ -25,11 +24,11 @@ const Manage = () => {
   const getStatusVariant = (status) => {
     switch (status) {
       case 0:
-        return "primary"; // Confirmed
+        return "primary"; 
       case 1:
-        return "success"; // Attended
+        return "success"; 
       case 2:
-        return "secondary"; // Cancelled
+        return "secondary"; 
       default:
         return "dark";
     }
@@ -37,10 +36,6 @@ const Manage = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      window.location.href = "/login";
-      return;
-    }
 
     const fetchRegistrations = async () => {
       try {
@@ -70,36 +65,21 @@ const Manage = () => {
   }, []);
 
   const handleCancel = async (registrationId) => {
-    const confirmCancel = window.confirm(
-      "Are you sure you want to cancel this registration?"
-    );
+    const confirmCancel = window.confirm("Are you sure you want to cancel this registration?");
     if (!confirmCancel) return;
 
     const token = localStorage.getItem("token");
-    if (!token) {
-      window.location.href = "/login";
-      return;
-    }
 
     try {
-      const res = await fetch(
-        `http://localhost:4000/api/registrations/${registrationId}/cancel`,
-        {
+      const res = await fetch(`http://localhost:4000/api/registrations/${registrationId}/cancel`,{
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ status: 2 }), // 2 = Cancelled
+          body: JSON.stringify({ status: 2 }),
         }
       );
-
-      if (res.status === 401) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
-        window.location.href = "/login";
-        return;
-      }
 
       const data = await res.json();
 
@@ -108,7 +88,6 @@ const Manage = () => {
         return;
       }
 
-      // Update local state so UI reflects the cancelled status
       setRegistrations((prev) =>
         prev.map((reg) =>
           reg._id === registrationId ? { ...reg, status: 2 } : reg
@@ -152,50 +131,28 @@ const Manage = () => {
                 <th>Actions</th>
               </tr>
             </thead>
+
             <tbody>
               {registrations.map((reg, index) => (
                 <tr key={reg._id}>
                   <td>{index + 1}</td>
 
-                  {/* Clickable event title */}
                   <td>
-                    {reg.event?._id ? (
-                      <Link
-                        to={`/event/${reg.event._id}`}
-                        className="text-decoration-none"
-                      >
-                        {reg.event.title || "View Event"}
-                      </Link>
+                    {reg.event?._id ? (<Link to={`/event/${reg.event._id}`} className="text-decoration-none">{reg.event.title || "View Event"}</Link>
                     ) : (
                       reg.event?.title || "Unknown Event"
                     )}
                   </td>
-
                   <td>
-                    <Badge bg={getStatusVariant(reg.status)}>
-                      {getStatusText(reg.status)}
-                    </Badge>
+                    <Badge bg={getStatusVariant(reg.status)}>{getStatusText(reg.status)}</Badge>
                   </td>
-
                   <td>
-                    {reg.createdAt
-                      ? new Date(reg.createdAt).toLocaleString("en-SG")
-                      : "—"}
+                    {reg.createdAt ? new Date(reg.createdAt).toLocaleString("en-SG"): "—"}
                   </td>
-
                   <td>{reg.wantsEmailReminder ? "Yes" : "No"}</td>
                   <td>{reg.wantsInAppReminder ? "Yes" : "No"}</td>
-
-                  {/* Actions column */}
                   <td>
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
-                      disabled={reg.status === 2}
-                      onClick={() => handleCancel(reg._id)}
-                    >
-                      {reg.status === 2 ? "Cancelled" : "Cancel"}
-                    </Button>
+                    <Button variant="outline-danger" size="sm" disabled={reg.status === 2} onClick={() => handleCancel(reg._id)}>{reg.status === 2 ? "Cancelled" : "Cancel"}</Button>
                   </td>
                 </tr>
               ))}

@@ -104,24 +104,24 @@ router.post("/events/:eventId/register", authenticateToken, async (req, res) => 
       });
     }
 
-    // 1) Check if user already registered (not cancelled)
-    const existing = await EventRegistration.findOne({
+    // 1) Check if there is an ACTIVE registration (status 0 or 1)
+    const activeRegistration = await EventRegistration.findOne({
       event: eventId,
       user: userId,
-      status: { $ne: 2 }, // 2 = Cancelled
+      status: { $in: [0, 1] },   // 0 = Confirmed, 1 = Attended
     });
 
-    if (existing) {
+    if (activeRegistration) {
       return res.status(400).json({
         success: false,
         message: "You have already registered for this event.",
       });
     }
 
-    // 2) Atomically decrement slots *only if* there is at least 1 slot left
+    // 2) Try to take a slot (capacity -1)
     const updatedEvent = await Event.findOneAndUpdate(
-      { _id: eventId, capacity: { $gt: 0 } }, // only match if slots > 0
-      { $inc: { capacity: -1 } },             // decrement by 1
+      { _id: eventId, capacity: { $gt: 0 } },
+      { $inc: { capacity: -1 } },
       { new: true }
     );
 
@@ -132,17 +132,23 @@ router.post("/events/:eventId/register", authenticateToken, async (req, res) => 
       });
     }
 
-    // 3) Create the registration record
+    // 3) ALWAYS create a NEW registration document
     const registration = await EventRegistration.create({
       event: eventId,
       user: userId,
-      // status: 0, reminderSent: false (defaults)
+      status: 0,                // Confirmed
+      wantsEmailReminder: false,
+      wantsInAppReminder: false,
+      emailReminderSent: false,
+      inAppReminderSent: false,
     });
+
+    console.log("Created NEW registration:", registration._id);
 
     return res.status(201).json({
       success: true,
       message: "Event registration successful.",
-      event: updatedEvent,  // optional, but nice to return updated slots
+      event: updatedEvent,
       registration,
     });
   } catch (err) {

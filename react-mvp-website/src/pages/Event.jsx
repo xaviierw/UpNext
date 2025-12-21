@@ -11,7 +11,7 @@ const Event = () => {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
 
   const formatDate = (date) => date
-      ? new Date(date).toLocaleString("en-SG", {day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,}
+      ? new Date(date).toLocaleString("en-SG", {timeZone: "Asia/Singapore", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,}
       ) : "TBA";
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const Event = () => {
                 <h5 className="text-center">Details</h5>
                 <br />
 
-                <p><strong>Event Date:</strong>{" "} {formatDate(event.startDateTime)}</p>
+                <p><strong>Event Date:</strong>{" "} {formatDate(event.startDateTime)} - {formatDate(event.endDateTime)}</p>
                 <p><strong>Venue:</strong> {event.location ?? "TBA"}</p>
                 <p><strong>Person-in-Charge:</strong>{" "} {event.personInCharge ?? "TBA"}</p>
                 <p><strong>Contact:</strong> {event.contact ?? "TBA"}</p>
@@ -74,6 +74,7 @@ const Event = () => {
                 <p><strong>Registration Closing Date:</strong>{" "} {formatDate(event.registrationDeadline)}</p>
 
                 <Button variant="primary" className="w-100 rounded-pill mt-3" onClick={() => setShowRegisterModal(true)}>Register Now!</Button>
+                <Button variant="secondary" className="w-100 rounded-pill mt-3">Bookmark</Button>
               </Card.Body>
             </Card>
           </Col>
