@@ -1,5 +1,6 @@
 import { Navbar, Nav, Container, Form, FormControl, NavDropdown } from "react-bootstrap"
-import { Link } from "react-router"   
+import { Link } from "react-router"
+import NotificationDropdown from "./NotificationDropdown";
 
 const handleLogout = () => {
   localStorage.removeItem("token");   
@@ -11,9 +12,8 @@ const NavBar = () => {
   return (
     <Navbar bg="light" expand="lg" fixed="top" className="shadow-sm">
       <Container fluid>
-        <Navbar.Brand as={Link} to="/">
-          <img src="/icons/Upnext.png" alt="logo" style={{ height: "45px", width: "auto" }}/>
-        </Navbar.Brand>
+        
+        <Navbar.Brand as={Link} to="/"><img src="/icons/Upnext.png" alt="logo" style={{ height: "45px", width: "auto" }}/></Navbar.Brand>
 
         <Navbar.Toggle aria-controls="upnext-nav" className="custom-collapse" />
 
@@ -25,14 +25,15 @@ const NavBar = () => {
           </Nav>
 
           <Form className="d-flex flex-grow-1 mx-lg-3 my-2 my-lg-0 nav-search-wrapper">
-            <FormControl
-              type="search"
-              placeholder="Search events..."
-              className="nav-search-input"
-            />
+            <FormControl type="search" placeholder="Search events..." className="nav-search-input"/>
           </Form>
 
-          <Nav className="ms-lg-auto mt-2 mt-lg-0 custom-nav">
+          <Nav className="custom-nav nav-right mt-2 mt-lg-0">
+
+            <Nav.Link as={Link} to="/myevents" className="my-events-btn">My Events</Nav.Link>
+
+            <NotificationDropdown />
+
             <NavDropdown title="Profile" id="profile-dropdown" align="end">
               <NavDropdown.Item as={Link} to="/account">My Account</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/settings">Settings</NavDropdown.Item>
