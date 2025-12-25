@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Container, Card, Form, Button, Alert, Row, Col } from "react-bootstrap";
 import "./Organiser.css";
+import NavBarOrg from "../components/NavBarOrg";
 
 const Organiser = () => {
   const [title, setTitle] = useState("");
@@ -89,6 +90,7 @@ const Organiser = () => {
 
   return (
     <Container className="my-5" style={{ maxWidth: "800px" }}>
+      <NavBarOrg />
       <Card className="shadow-sm">
         <Card.Body>
           <Card.Title className="mb-3">Create Event</Card.Title>

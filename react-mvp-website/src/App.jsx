@@ -7,6 +7,7 @@ import NotFound from "./pages/NotFound";
 import Event from "./pages/Event";
 import Manage from "./pages/Manage";
 import Organiser from "./pages/Organiser";
+import OrganiserEvent from "./pages/OrganiserEvent";
 import { Routes, Route, Navigate } from "react-router";
 import { jwtDecode } from "jwt-decode";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -46,7 +47,8 @@ function App() {
       <Route path="/personalize" element={<StudentRoute><Personalize /></StudentRoute>} />
       <Route path="/event/:id" element={<StudentRoute><Event /></StudentRoute>} />
       <Route path="/myevents" element={<StudentRoute><Manage /></StudentRoute>} />
-      <Route path="/organiser" element={<OrganiserRoute><Organiser /></OrganiserRoute>} />
+      <Route path="/organiser/create" element={<OrganiserRoute><Organiser /></OrganiserRoute>} />
+      <Route path="/organiser/event" element={<OrganiserRoute><OrganiserEvent /></OrganiserRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

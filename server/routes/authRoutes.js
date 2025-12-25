@@ -82,12 +82,12 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Logout
-router.post("/api/logout", (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: "Logged out successfully"
-  });
-});
+// // Logout
+// router.post("/api/logout", (req, res) => {
+//   return res.status(200).json({
+//     success: true,
+//     message: "Logged out successfully"
+//   });
+// });
 
 export default router;
