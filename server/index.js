@@ -9,6 +9,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import organiserRoutes from "./routes/organiserRoutes.js";
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/api", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", eventRoutes);
 app.use("/api", notificationRoutes);
+app.use("/api", organiserRoutes);
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`API listening on ${port}`));

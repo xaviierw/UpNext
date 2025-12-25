@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 import User from "../models/User.js";
 import EventRegistration from "../models/EventRegistration.js";
 import Event from "../models/Event.js";
-import { authenticateToken } from "../middleware/auth.js";
+import { authenticateToken, requireRole } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // GET personalize info
-router.get("/personalize", authenticateToken, async (req, res) => {
+router.get("/personalize", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const userId = req.user.userId;
 
@@ -28,7 +28,7 @@ router.get("/personalize", authenticateToken, async (req, res) => {
 });
 
 // POST update preferences
-router.post("/personalize", authenticateToken, async (req, res) => {
+router.post("/personalize", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const userId = req.user.userId;
     const { eventTypes, eventCategories } = req.body;
@@ -65,7 +65,7 @@ router.post("/personalize", authenticateToken, async (req, res) => {
   }
 });
 
-router.get("/me", authenticateToken, async (req, res) => {
+router.get("/me", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const userId = req.user.userId;
 
@@ -91,7 +91,7 @@ router.get("/me", authenticateToken, async (req, res) => {
   }
 });
 
-router.put("/registrations/:id/preferences", authenticateToken, async (req, res) => {
+router.put("/registrations/:id/preferences", authenticateToken, requireRole(["student"]), async (req, res) => {
     const { id } = req.params;
     const userId = req.user.userId; 
     const { wantsEmailReminder, wantsInAppReminder } = req.body;
@@ -147,7 +147,7 @@ router.put("/registrations/:id/preferences", authenticateToken, async (req, res)
   }
 );
 
-router.get("/registrations/me", authenticateToken, async (req, res) => {
+router.get("/registrations/me", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const userId = req.user.userId;
 
@@ -169,7 +169,7 @@ router.get("/registrations/me", authenticateToken, async (req, res) => {
   }
 });
 
-router.put("/registrations/:id/cancel", authenticateToken, async (req, res) => {
+router.put("/registrations/:id/cancel", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id || req.user._id || req.user.userId;

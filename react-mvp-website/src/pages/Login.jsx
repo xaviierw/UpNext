@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router"
+import { useNavigate, Link } from "react-router";
+import "./Auth.css";
 
 const Login = () => {
+  const [portal, setPortal] = useState("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -15,54 +17,69 @@ const Login = () => {
       const res = await fetch("http://localhost:4000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, portal }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setMessage(data.message || "Login failed, incorrect email or password. Please try again!.");
+        setMessage(
+          data.message ||
+            "Login failed, incorrect email or password. Please try again!."
+        );
         return;
       }
 
       localStorage.setItem("token", data.token);
-      
-      if (!data.personalized) {
-        navigate("/personalize")
+
+      if (portal === "organiser") {navigate("/organiser");
+        return;
+      }
+
+      if (!data.personalized) {navigate("/personalize");
       } else {
         navigate("/");
       }
     } catch (err) {
       setMessage("Server error. Try again later.");
     }
-
-    setMessage("Login successful! Redirecting...");
-    setEmail("");
-    setPassword("");
   }
 
   return (
+    <div className="auth-page">
+      <div className="loginForm">
+        <h2>Login</h2>
 
-    <div class="loginForm">
-      <h2>Login</h2>
+        <div className="portal-toggle">
+          <label><input type="radio" name="portal" value="student" checked={portal === "student"} onChange={() => setPortal("student")}/>Student</label>
 
-      {message ? <p>{message}</p> : null}
-
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Email:</label><br />
-          <input type="email" value={email} onChange={event => setEmail(event.target.value)} required/>
+          <label><input type="radio" name="portal" value="organiser" checked={portal === "organiser"} onChange={() => setPortal("organiser")}/>Organiser</label>
         </div>
 
-        <div>
-          <label>Password:</label><br />
-          <input type="password" value={password} onChange={event => setPassword(event.target.value)} required/>
-        </div>
+        {message && <p className="auth-message">{message}</p>}
 
-        <button type="submit">Login</button>
-        <br></br>
-        <p>Not registered yet? <a href="/register">Register!</a></p>
-      </form>
+        <form onSubmit={handleLogin}>
+          <div>
+            <label>Email:</label>
+            <br />
+            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)}required/>
+          </div>
+
+          <div>
+            <label>Password:</label>
+            <br />
+            <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required/>
+          </div>
+
+          <button type="submit">Login as {portal === "student" ? "Student" : "Organiser"}</button>
+
+          {portal === "student" ? (
+            <p> Not registered yet? <Link to="/register">Register!</Link></p>
+          ) : (
+            <p style={{ opacity: 0.8 }}>Organiser accounts are created by the system admin.</p>
+          )}
+        </form>
+      </div>
     </div>
   );
 };
