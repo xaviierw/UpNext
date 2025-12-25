@@ -41,9 +41,9 @@ const EventCarousel = ({ events = [] }) => {
               regDeadline={formatDate(event.registrationDeadline)}
               eventDate={formatDate(event.startDateTime)}
               image={event.imageURL}
-              capacity={event.capacity}
+              capacity={event.capacity ?? "—"}
               title={event.title}
-              tags={[event.eventCategories, ...event.eventTypes || []].filter(Boolean)}
+              tags={[...(event.eventCategories || []), ...(event.eventTypes || []),].filter(Boolean)}
             />
           </div>
         ))}

@@ -14,6 +14,12 @@ const EventCard = ({
   onClick,
 }) => {
   
+const imgSrc = image
+  ? image.startsWith("http")
+    ? image
+    : `http://localhost:4000${image}`
+  : "";
+
   return (
     <Card className="event-card shadow-sm" style={{ borderRadius: "12px" }} onClick={onClick}>
       <Badge className="days-left-badge" bg="primary">
@@ -21,8 +27,8 @@ const EventCard = ({
       </Badge>
 
       <div className="event-card-img-wrapper">
-        {image ? (
-          <Card.Img variant="top" src={image} className="event-card-img"/>
+        {imgSrc ? (
+          <Card.Img variant="top" src={imgSrc} className="event-card-img"/>
         ) : (
           <div className="event-card-placeholder"><i className="bi bi-image"></i></div>
         )}

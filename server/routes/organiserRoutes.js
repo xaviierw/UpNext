@@ -1,11 +1,12 @@
 import express from "express";
 import { authenticateToken, requireRole } from "../middleware/auth.js";
+import uploadImage from "../services/uploadImage.js";
 import Event from "../models/Event.js";
 
 const router = express.Router();
 
 // POST an event (for organiser)
-router.post("/organiser/events", authenticateToken, requireRole(["organiser"]), async (req, res) => {
+router.post("/organiser/events", authenticateToken, requireRole(["organiser"]), uploadImage.single("image"), async (req, res) => {
   try {
     const {
       title,
@@ -15,19 +16,20 @@ router.post("/organiser/events", authenticateToken, requireRole(["organiser"]), 
       endDateTime,
       registrationDeadline,
       capacity,
-      imageURL,
       registrationRequired,
       eventCategories,
       eventTypes,
       personInCharge,
       contact,
     } = req.body;
+
     if (!title || !description || !location || !startDateTime || !endDateTime) {
       return res.status(400).json({ message: "All fields are required" });
     }
     if (new Date(endDateTime) <= new Date(startDateTime)) {
       return res.status(400).json({ message: "End date must be after start date" });
     }
+    const imageURL = req.file ? `/images/${req.file.filename}` : "";
     const event = await Event.create({
       title,
       description,
@@ -37,7 +39,7 @@ router.post("/organiser/events", authenticateToken, requireRole(["organiser"]), 
       organiser: req.user.userId,
       registrationDeadline: registrationDeadline ? new Date(registrationDeadline) : undefined,
       capacity: capacity ? Number(capacity) : undefined,
-      imageURL: imageURL || "",
+      imageURL: imageURL,
       registrationRequired: registrationRequired === true || registrationRequired === "true",
       eventCategories: Array.isArray(eventCategories) ? eventCategories : [],
       eventTypes: Array.isArray(eventTypes) ? eventTypes : [],

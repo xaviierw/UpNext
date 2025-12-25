@@ -30,7 +30,7 @@ const Login = () => {
 
       localStorage.setItem("token", data.token);
 
-      if (portal === "organiser") {navigate("/organiser");
+      if (portal === "organiser") {navigate("/organiser/event");
         return;
       }
 

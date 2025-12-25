@@ -69,7 +69,7 @@ const NotificationDropdown = () => {
                 <div>
                   <div className="fw-semibold">{n.title}</div>
                   <div className="text-muted small">{n.message}</div>
-                  <div className="text-muted small">{formatTime(n.createdAt)}</div>
+                  <div className="text-muted small">Sent At: {formatTime(n.createdAt)}</div>
                 </div>
               </div>
             </Dropdown.Item>

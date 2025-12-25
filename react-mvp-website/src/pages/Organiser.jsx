@@ -35,27 +35,32 @@ const Organiser = () => {
 
     try {
       const token = localStorage.getItem("token");
+
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("location", location);
+      formData.append("startDateTime", startDateTime);
+      formData.append("endDateTime", endDateTime);
+      formData.append("registrationDeadline", registrationDeadline);
+      formData.append("capacity", capacity);
+      formData.append("registrationRequired", registrationRequired);
+      formData.append("contact", contact);
+      formData.append("personInCharge", personInCharge);
+
+      eventCategories.forEach((cat) => formData.append("eventCategories[]", cat));
+      eventTypes.forEach((type) => formData.append("eventTypes[]", type));
+
+      if (imageURL) {
+        formData.append("image", imageURL);
+      }
+
       const res = await fetch("http://localhost:4000/api/organiser/events", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          title,
-          description,
-          location,
-          startDateTime,
-          endDateTime,
-          registrationDeadline,
-          capacity,
-          imageURL,
-          registrationRequired,
-          eventCategories,
-          eventTypes,
-          contact,
-          personInCharge,
-        }),
+        body: formData,
       });
 
       const data = await res.json();
@@ -139,18 +144,19 @@ const Organiser = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Image URL</Form.Label>
-              <Form.Control type="url" value={imageURL} onChange={(e) => setImageURL(e.target.value)} />
+              <Form.Label>Event Image</Form.Label>
+              <Form.Control type="file" accept="image/*" onChange={(e) => setImageURL(e.target.files[0])}/>
+              <Form.Text muted>Upload 1 image only</Form.Text>
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Contact</Form.Label>
-              <Form.Control value={contact} onChange={(e) => setDescription(e.target.value)} required />
+              <Form.Control value={contact} onChange={(e) => setContact(e.target.value)} required />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Person-in-Charge</Form.Label>
-              <Form.Control value={personInCharge} onChange={(e) => setDescription(e.target.value)} required />
+              <Form.Control value={personInCharge} onChange={(e) => setPersonInCharge(e.target.value)} required />
             </Form.Group>
 
             <Form.Group className="mb-3">

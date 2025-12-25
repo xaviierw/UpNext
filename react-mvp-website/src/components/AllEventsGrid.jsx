@@ -39,11 +39,11 @@ const AllEventsGrid = ({ events = [] }) => {
           <EventCard key={event._id} onClick={() => handleClick(event._id)}
             daysLeft={calculateDaysLeft(event.registrationDeadline)}
             image={event.imageURL}
-            capacity={event.capacity}
+            capacity={event.capacity ?? "—"}
             regDeadline={formatDate(event.registrationDeadline)}
             eventDate={formatDate(event.startDateTime)}
             title={event.title}
-            tags={[event.eventCategories, ...(event.eventTypes || []),
+            tags={[...(event.eventCategories || []), ...(event.eventTypes || []),
             ].filter(Boolean)}
           />
         ))}
