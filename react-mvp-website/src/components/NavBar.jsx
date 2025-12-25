@@ -5,6 +5,7 @@ import NotificationDropdown from "./NotificationDropdown";
 const handleLogout = () => {
   localStorage.removeItem("token");   
   localStorage.removeItem("username"); 
+  localStorage.removeItem("role");
   window.location.href = "/login";     
 };
 

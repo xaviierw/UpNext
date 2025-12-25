@@ -2,13 +2,13 @@ import express from "express";
 import Event from "../models/Event.js";
 import User from "../models/User.js";
 import EventRegistration from "../models/EventRegistration.js";
-import { authenticateToken } from "../middleware/auth.js";
+import { authenticateToken, requireRole } from "../middleware/auth.js";
 import mongoose from "mongoose";
 
 const router = express.Router();
 
 // GET all events
-router.get("/events", authenticateToken, async (req, res) => {
+router.get("/events", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const today = new Date();
     const events = await Event.find({
@@ -23,7 +23,7 @@ router.get("/events", authenticateToken, async (req, res) => {
 });
 
 // GET personalized events
-router.get("/events/personalized", authenticateToken, async (req, res) => {
+router.get("/events/personalized", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const userId = req.user.userId;
     const user = await User.findById(userId).select(
@@ -60,7 +60,7 @@ router.get("/events/personalized", authenticateToken, async (req, res) => {
   }
 });
 
-router.get("/events/:id", authenticateToken, async (req, res) => {
+router.get("/events/:id", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -92,7 +92,7 @@ router.get("/events/:id", authenticateToken, async (req, res) => {
   }
 });
 
-router.post("/events/:eventId/register", authenticateToken, async (req, res) => {
+router.post("/events/:eventId/register", authenticateToken, requireRole(["student"]), async (req, res) => {
   const { eventId } = req.params;
   const userId = req.user.userId;
 

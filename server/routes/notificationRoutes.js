@@ -1,12 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
 import Notification from "../models/Notification.js";
-import { authenticateToken } from "../middleware/auth.js";
+import { authenticateToken, requireRole } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // Returns latest notifications + unreadCount
-router.get("/notifications", authenticateToken, async (req, res) => {
+router.get("/notifications", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const userId = req.user.userId;
 
@@ -40,7 +40,7 @@ router.get("/notifications", authenticateToken, async (req, res) => {
 });
 
 // Marks a single notification as read (only if it belongs to the logged-in user)
-router.post("/notifications/:id/read", authenticateToken, async (req, res) => {
+router.post("/notifications/:id/read", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const userId = req.user.userId;
     const { id } = req.params;
@@ -73,7 +73,7 @@ router.post("/notifications/:id/read", authenticateToken, async (req, res) => {
 });
 
 // Marks all unread notifications as read for the logged-in user
-router.post("/notifications/read-all", authenticateToken, async (req, res) => {
+router.post("/notifications/read-all", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const userId = req.user.userId;
 
