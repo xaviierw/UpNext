@@ -31,13 +31,10 @@ const Register = () => {
       setEmail("");
       setUserName("");
       setPassword("");
-
       setTimeout(() => {
         navigate("/login");
       }, 2500);
-    } catch (err) {
-      setMessage("Server error. Try again later.");
-    }
+    } catch (err) {setMessage("Server error. Try again later.");}
   }
 
   return (

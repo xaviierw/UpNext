@@ -8,7 +8,7 @@ export function authenticateToken(req, res, next) {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
     if (err) return res.sendStatus(403);
-    req.user = payload;   // payload must include role
+    req.user = payload;
     next();
   });
 }

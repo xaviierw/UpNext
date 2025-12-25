@@ -53,14 +53,10 @@ const Manage = () => {
         }
 
         setRegistrations(data.registrations || []);
-      } catch (err) {
-        console.error("Error fetching registrations:", err);
+      } catch (err) {console.error("Error fetching registrations:", err);
         setError("Something went wrong while loading your registrations.");
-      } finally {
-        setLoading(false);
-      }
+      } finally {setLoading(false);}
     };
-
     fetchRegistrations();
   }, []);
 
@@ -89,9 +85,7 @@ const Manage = () => {
       }
 
       setRegistrations((prev) =>
-        prev.map((reg) =>
-          reg._id === registrationId ? { ...reg, status: 2 } : reg
-        )
+        prev.map((reg) => reg._id === registrationId ? { ...reg, status: 2 } : reg)
       );
     } catch (err) {
       console.error("Error cancelling registration:", err);
@@ -136,24 +130,17 @@ const Manage = () => {
               {registrations.map((reg, index) => (
                 <tr key={reg._id}>
                   <td>{index + 1}</td>
-
                   <td>
                     {reg.event?._id ? (<Link to={`/event/${reg.event._id}`} className="text-decoration-none">{reg.event.title || "View Event"}</Link>
                     ) : (
                       reg.event?.title || "Unknown Event"
                     )}
                   </td>
-                  <td>
-                    <Badge bg={getStatusVariant(reg.status)}>{getStatusText(reg.status)}</Badge>
-                  </td>
-                  <td>
-                    {reg.createdAt ? new Date(reg.createdAt).toLocaleString("en-SG"): "—"}
-                  </td>
+                  <td><Badge bg={getStatusVariant(reg.status)}>{getStatusText(reg.status)}</Badge></td>
+                  <td>{reg.createdAt ? new Date(reg.createdAt).toLocaleString("en-SG"): "—"}</td>
                   <td>{reg.wantsEmailReminder ? "Yes" : "No"}</td>
                   <td>{reg.wantsInAppReminder ? "Yes" : "No"}</td>
-                  <td>
-                    <Button variant="outline-danger" size="sm" disabled={reg.status === 2} onClick={() => handleCancel(reg._id)}>{reg.status === 2 ? "Cancelled" : "Cancel"}</Button>
-                  </td>
+                  <td><Button variant="outline-danger" size="sm" disabled={reg.status === 2} onClick={() => handleCancel(reg._id)}>{reg.status === 2 ? "Cancelled" : "Cancel"}</Button></td>
                 </tr>
               ))}
             </tbody>

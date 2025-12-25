@@ -14,8 +14,7 @@ useEffect(() => {
 
   fetch("http://localhost:4000/api/personalize", {
     headers: { Authorization: `Bearer ${token}` },
-  })
-    .then((res) => res.json())
+  }).then((res) => res.json())
     .then((data) => {
       if (data.user.personalized) {
         navigate("/");
@@ -25,7 +24,6 @@ useEffect(() => {
     })
     .catch(() => setUser(null));
 }, []);
-
 
   const eventTypes = [
     { label: "Workshops", icon: "/icons/workshop.png" },
@@ -43,7 +41,6 @@ useEffect(() => {
     { label: "Community Service", icon: "/icons/community.png" },
     { label: "TP Events (All Events in TP)", icon: "/icons/temasek.jpg" },
   ];
-
 
   function toggleType(label) {
     if (selectedTypes.includes(label)) {
@@ -65,7 +62,6 @@ useEffect(() => {
 
     async function handleFinish() {
     const token = localStorage.getItem("token");
-
     try {
       const res = await fetch("http://localhost:4000/api/personalize", {
         method: "POST",
@@ -92,7 +88,6 @@ useEffect(() => {
     }
   }
 
-
   if (!user) return <p>Loading...</p>;
 
   return (
@@ -105,12 +100,7 @@ useEffect(() => {
           <div className="row row-cols-2 row-cols-md-4 g-3 mt-3">
             {eventTypes.map(et => (
               <div className="col" key={et.label}>
-                <EventBox
-                  icon={et.icon}
-                  label={et.label}
-                  selected={selectedTypes.includes(et.label)}
-                  onClick={() => toggleType(et.label)}
-                />
+                <EventBox icon={et.icon} label={et.label} selected={selectedTypes.includes(et.label)} onClick={() => toggleType(et.label)}/>
               </div>
             ))}
           </div>
@@ -124,12 +114,7 @@ useEffect(() => {
           <div className="row row-cols-2 row-cols-md-3 g-3 mt-3">
             {categories.map(cat => (
               <div className="col" key={cat.label}>
-                <EventBox
-                  icon={cat.icon}
-                  label={cat.label}
-                  selected={selectedCategories.includes(cat.label)}
-                  onClick={() => toggleCategory(cat.label)}
-                />
+                <EventBox icon={cat.icon} label={cat.label} selected={selectedCategories.includes(cat.label)} onClick={() => toggleCategory(cat.label)}/>
               </div>
             ))}
           </div>

@@ -1,3 +1,5 @@
+// This componenet is use in the All Events and Personalized Events section in the home page
+
 import { Card, Badge } from "react-bootstrap";
 import "./css/EventCard.css";
 
@@ -20,15 +22,9 @@ const EventCard = ({
 
       <div className="event-card-img-wrapper">
         {image ? (
-          <Card.Img
-            variant="top"
-            src={image}
-            className="event-card-img"
-          />
+          <Card.Img variant="top" src={image} className="event-card-img"/>
         ) : (
-          <div className="event-card-placeholder">
-            <i className="bi bi-image"></i>
-          </div>
+          <div className="event-card-placeholder"><i className="bi bi-image"></i></div>
         )}
       </div>
 
@@ -42,9 +38,7 @@ const EventCard = ({
           <div className="tags-tooltip-wrapper mt-2">
             <span className="tags-pill">Tags</span>
             <div className="tags-tooltip">
-              {tags.map((tag, idx) => (
-                <div key={idx} className="tooltip-tag">
-                  {tag}
+              {tags.map((tag, idx) => (<div key={idx} className="tooltip-tag">{tag}
                 </div>
               ))}
             </div>

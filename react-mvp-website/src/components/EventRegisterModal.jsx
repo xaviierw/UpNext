@@ -1,19 +1,19 @@
+// This component is use in the event registration page in the event page. It will pop up when user clicks on register event
+
 import { useEffect, useState } from "react";
 import { Modal, Button, Spinner } from "react-bootstrap";
 
 const EventRegisterModal = ({ show, onHide, event }) => {
-  // 1 = review info, 2 = T&C, 3 = success + set preferences
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(1); // 1 is review their personal information then 2 is terms and conditions afterwards its success message and set their preferences
 
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
-  // new: registration + preference states
   const [registration, setRegistration] = useState(null);
   const [savingPrefs, setSavingPrefs] = useState(false);
   const [emailOptIn, setEmailOptIn] = useState(false);
   const [inAppOptIn, setInAppOptIn] = useState(false);
+  const token = localStorage.getItem("token");
 
   // Load current user info when modal opens
   useEffect(() => {
@@ -28,29 +28,25 @@ const EventRegisterModal = ({ show, onHide, event }) => {
       return;
     }
 
-  const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token || !event?._id) return;
 
-  setLoadingUser(true);
+    setLoadingUser(true);
 
-  fetch("http://localhost:4000/api/me", {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) setUser(data.user);
-    })
-    .catch((err) => console.error("Failed to load user info:", err))
-    .finally(() => setLoadingUser(false));
+    fetch("http://localhost:4000/api/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then((res) => res.json())
+      .then((data) => {
+        if (data.success) setUser(data.user);
+      }).catch((err) => console.error("Failed to load user info:", err))
+      .finally(() => setLoadingUser(false));
   }, [show]);
 
-  const formatDate = (date) => date
-      ? new Date(date).toLocaleString("en-SG", {day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,}
-      ) : "TBA";
-    
+  const formatDate = (date) =>
+    date
+      ? new Date(date).toLocaleString("en-SG", {day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,}): "TBA";
+
   // register user for event
   const handleConfirm = async () => {
-    const token = localStorage.getItem("token");
     if (!token || !event?._id) return;
 
     try {
@@ -58,8 +54,10 @@ const EventRegisterModal = ({ show, onHide, event }) => {
 
       const res = await fetch(`http://localhost:4000/api/events/${event._id}/register`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`,
-        },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({}),
         }
       );
@@ -72,33 +70,38 @@ const EventRegisterModal = ({ show, onHide, event }) => {
 
       const data = await res.json();
 
-      if (!data.success) {
-        console.error(data.message || "Failed to register for event");
+      if (!data.success) {console.error(data.message || "Failed to register for event");
         return;
       }
 
-      // store registration so we know which one to update
+      // store registration so know which one to update
       setRegistration(data.registration);
       setStep(3);
-    } catch (err) {
-      console.error("Failed to register:", err);
-    } finally {
-      setSubmitting(false);
+    } catch (err) {console.error("Failed to register:", err);
+    } finally {setSubmitting(false);
     }
   };
 
   // Step 3 save reminder preferences
   const handleSavePreferences = async () => {
-    const token = localStorage.getItem("token");
     if (!token || !registration?._id) {
       onHide();
       return;
-    } try {
+    }
+    try {
       setSavingPrefs(true);
-      const res = await fetch(`http://localhost:4000/api/registrations/${registration._id}/preferences`,{
+      const res = await fetch(
+        `http://localhost:4000/api/registrations/${registration._id}/preferences`,
+        {
           method: "PUT",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`,},
-          body: JSON.stringify({ wantsEmailReminder: emailOptIn, wantsInAppReminder: inAppOptIn, }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            wantsEmailReminder: emailOptIn,
+            wantsInAppReminder: inAppOptIn,
+          }),
         }
       );
 
@@ -106,12 +109,9 @@ const EventRegisterModal = ({ show, onHide, event }) => {
         const text = await res.text();
         console.error("Failed to save preferences:", res.status, text);
       }
-    } catch (err) {
-      console.error("Error saving reminder preferences:", err);
-    } finally {
-      setSavingPrefs(false);
-      onHide();
-    }
+    } catch (err) {console.error("Error saving reminder preferences:", err);
+
+    } finally {setSavingPrefs(false); onHide();}
   };
 
   return (
@@ -122,7 +122,8 @@ const EventRegisterModal = ({ show, onHide, event }) => {
 
           <Modal.Body>
             {loadingUser ? (
-              <div className="text-center"><Spinner animation="border" size="sm" /> Loading...</div>) : (
+              <div className="text-center"><Spinner animation="border" size="sm" /> Loading...</div>
+            ) : (
               <>
                 <p><strong>Event:</strong> {event?.title}</p>
                 <p><strong>Date:</strong>{" "}{formatDate(event.startDateTime)}</p>
@@ -132,10 +133,9 @@ const EventRegisterModal = ({ show, onHide, event }) => {
               </>
             )}
           </Modal.Body>
-
           <Modal.Footer>
             <Button variant="secondary" onClick={onHide}>Cancel</Button>
-            <Button variant="primary" onClick={() => setStep(2)}disabled={loadingUser || !user}>Next</Button>
+            <Button variant="primary" onClick={() => setStep(2)} disabled={loadingUser || !user}>Next</Button>
           </Modal.Footer>
         </>
       )}
@@ -154,8 +154,7 @@ const EventRegisterModal = ({ show, onHide, event }) => {
           </Modal.Body>
 
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setStep(1)}>Back</Button>
-            
+            <Button variant="secondary" onClick={() => setStep(1)}>Bac</Button>
             <Button variant="primary" onClick={handleConfirm} disabled={submitting}>{submitting ? "Registering..." : "Confirm registration"}</Button>
           </Modal.Footer>
         </>
@@ -186,7 +185,7 @@ const EventRegisterModal = ({ show, onHide, event }) => {
           </Modal.Body>
 
           <Modal.Footer>
-            <Button variant="primary" onClick={handleSavePreferences} disabled={savingPrefs}>{savingPrefs ? "Saving..." : "Continue"}</Button>
+            <Button variant="primary" onClick={handleSavePreferences}disabled={savingPrefs}>{savingPrefs ? "Saving..." : "Continue"}</Button>
           </Modal.Footer>
         </>
       )}

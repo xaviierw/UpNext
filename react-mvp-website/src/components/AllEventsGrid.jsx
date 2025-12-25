@@ -1,3 +1,5 @@
+// This component is use in the All events section in the Home page
+
 import EventCard from "./EventCard";
 import "./css/AllEventsGrid.css";
 import { useNavigate } from "react-router";
@@ -13,7 +15,7 @@ const AllEventsGrid = ({ events = [] }) => {
     const diffTime = regDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     if (diffDays < 0) return "Closed";
-    return `${diffDays} Days left`;
+    return `${diffDays} left till registration closes`;
   };
 
   const handleClick = (eventId) => {
@@ -27,30 +29,21 @@ const AllEventsGrid = ({ events = [] }) => {
   };
 
   if (!events.length) {
-    return (
-      <p className="text-center text-muted">No events available.</p>
-    );
+    return (<p className="text-center text-muted">No events available.</p>);
   }
 
   return (
     <div className="all-events-wrapper">
       <div className="all-events-grid">
         {events.map((event) => (
-          <EventCard
-            key={event._id}
-            onClick={() => handleClick(event._id)}
-
+          <EventCard key={event._id} onClick={() => handleClick(event._id)}
             daysLeft={calculateDaysLeft(event.registrationDeadline)}
             image={event.imageURL}
             capacity={event.capacity}
-
             regDeadline={formatDate(event.registrationDeadline)}
             eventDate={formatDate(event.startDateTime)}
-
             title={event.title}
-            tags={[
-              event.eventCategories,
-              ...(event.eventTypes || []),
+            tags={[event.eventCategories, ...(event.eventTypes || []),
             ].filter(Boolean)}
           />
         ))}

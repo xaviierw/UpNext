@@ -11,15 +11,12 @@ const router = express.Router();
 router.get("/personalize", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const userId = req.user.userId;
-
     const user = await User.findById(userId).select(
       "email personalized username eventTypes eventCategories"
     );
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     res.json({ user });
   } catch (err) {
     console.error(err);
@@ -32,15 +29,12 @@ router.post("/personalize", authenticateToken, requireRole(["student"]), async (
   try {
     const userId = req.user.userId;
     const { eventTypes, eventCategories } = req.body;
-
     if (!Array.isArray(eventTypes) || !Array.isArray(eventCategories)) {
       return res.status(400).json({ message: "Invalid preferences format" });
     }
-
     if (eventTypes.length > 2 || eventCategories.length > 3) {
       return res.status(400).json({ message: "Too many preferences selected" });
     }
-
     const user = await User.findByIdAndUpdate(
       userId,
       {
@@ -50,11 +44,9 @@ router.post("/personalize", authenticateToken, requireRole(["student"]), async (
       },
       { new: true }
     ).select("-password");
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     res.json({
       message: "Preferences saved successfully",
       user,
@@ -65,19 +57,17 @@ router.post("/personalize", authenticateToken, requireRole(["student"]), async (
   }
 });
 
+// GET user information, use when reviewing their information before registering for event
 router.get("/me", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const userId = req.user.userId;
-
     const user = await User.findById(userId).select("username email");
-
     if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
-
     return res.status(200).json({
       success: true,
       user,
@@ -91,11 +81,11 @@ router.get("/me", authenticateToken, requireRole(["student"]), async (req, res) 
   }
 });
 
+// use to update their reminders preferences
 router.put("/registrations/:id/preferences", authenticateToken, requireRole(["student"]), async (req, res) => {
     const { id } = req.params;
     const userId = req.user.userId; 
     const { wantsEmailReminder, wantsInAppReminder } = req.body;
-
     try {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({
@@ -103,7 +93,6 @@ router.put("/registrations/:id/preferences", authenticateToken, requireRole(["st
           message: "Invalid registration ID.",
         });
       }
-
       const update = {};
       if (typeof wantsEmailReminder === "boolean") {
         update.wantsEmailReminder = wantsEmailReminder;
@@ -111,27 +100,23 @@ router.put("/registrations/:id/preferences", authenticateToken, requireRole(["st
       if (typeof wantsInAppReminder === "boolean") {
         update.wantsInAppReminder = wantsInAppReminder;
       }
-
       if (Object.keys(update).length === 0) {
         return res.status(400).json({
           success: false,
           message: "No valid preferences provided.",
         });
       }
-
       const updatedRegistration = await EventRegistration.findOneAndUpdate(
         { _id: id, user: userId },
         update,
         { new: true }
       );
-
       if (!updatedRegistration) {
         return res.status(404).json({
           success: false,
           message: "Registration not found for this user.",
         });
       }
-
       return res.json({
         success: true,
         message: "Reminder preferences updated.",
@@ -147,19 +132,17 @@ router.put("/registrations/:id/preferences", authenticateToken, requireRole(["st
   }
 );
 
+// GET student bookings in the manage event page
 router.get("/registrations/me", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const userId = req.user.userId;
-
     const registrations = await EventRegistration.find({ user: userId })
       .populate("event")              
       .sort({ createdAt: -1 });
-
     return res.json({
       success: true,
       registrations,
     });
-
   } catch (err) {
     console.error("Error fetching registrations:", err);
     return res.status(500).json({
@@ -169,11 +152,11 @@ router.get("/registrations/me", authenticateToken, requireRole(["student"]), asy
   }
 });
 
+// PUT to cancel bookings in the manage event page
 router.put("/registrations/:id/cancel", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id || req.user._id || req.user.userId;
-
     const reg = await EventRegistration.findOneAndUpdate(
       { _id: id, user: userId },
       { status: 2 },
@@ -186,13 +169,11 @@ router.put("/registrations/:id/cancel", authenticateToken, requireRole(["student
         message: "Registration not found or not yours",
       });
     }
-
     const updatedEvent = await Event.findByIdAndUpdate(
       reg.event,
       { $inc: { capacity: 1 } },
       { new: true }
     );
-
     res.json({
       success: true,
       registration: reg,

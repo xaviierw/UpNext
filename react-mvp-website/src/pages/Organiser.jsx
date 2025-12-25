@@ -35,7 +35,6 @@ const Organiser = () => {
 
     try {
       const token = localStorage.getItem("token");
-
       const res = await fetch("http://localhost:4000/api/organiser/events", {
         method: "POST",
         headers: {
@@ -115,6 +114,7 @@ const Organiser = () => {
                   <Form.Control type="datetime-local" value={startDateTime} onChange={(e) => setStartDateTime(e.target.value)} required />
                 </Form.Group>
               </Col>
+
               <Col>
                 <Form.Group className="mb-3">
                   <Form.Label>End Date & Time</Form.Label>
@@ -154,12 +154,7 @@ const Organiser = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Check
-                type="checkbox"
-                label="Registration Required"
-                checked={registrationRequired}
-                onChange={(e) => setRegistrationRequired(e.target.checked)}
-              />
+              <Form.Check type="checkbox" label="Registration Required" checked={registrationRequired} onChange={(e) => setRegistrationRequired(e.target.checked)}/>
             </Form.Group>
 
            <p className="note"><span className="note-label">Note:</span>  In order to reach the right audience, be clear with your selection of event's category & type.</p>
@@ -167,30 +162,18 @@ const Organiser = () => {
             <Form.Group className="mb-3">
               <Form.Label>Event Categories</Form.Label>
               {["Technology", "Business", "Design", "Science", "Sports & Wellness", "Community Service", "TP Events (All Events in TP)"].map((cat) => (
-                <Form.Check
-                  key={cat}
-                  label={cat}
-                  checked={eventCategories.includes(cat)}
-                  onChange={() => handleCheckboxChange(cat, setEventCategories, eventCategories)}
-                />
+                <Form.Check key={cat} label={cat} checked={eventCategories.includes(cat)} onChange={() => handleCheckboxChange(cat, setEventCategories, eventCategories)}/>
               ))}
             </Form.Group>
 
             <Form.Group className="mb-4">
               <Form.Label>Event Types</Form.Label>
               {["Workshops", "Competitions", "Talks & Seminar", "Career Events"].map((type) => (
-                <Form.Check
-                  key={type}
-                  label={type}
-                  checked={eventTypes.includes(type)}
-                  onChange={() => handleCheckboxChange(type, setEventTypes, eventTypes)}
-                />
+                <Form.Check key={type} label={type} checked={eventTypes.includes(type)} onChange={() => handleCheckboxChange(type, setEventTypes, eventTypes)}/>
               ))}
             </Form.Group>
 
-            <Button type="submit" disabled={submitting}>
-              {submitting ? "Posting..." : "Post Event"}
-            </Button>
+            <Button type="submit" disabled={submitting}>{submitting ? "Posting..." : "Post Event"}</Button>
             <br />
             <br />
             <p className="impt-text">*Submitted requests will be reviewed by administrators. Approval may take up to 3 working days.*</p>

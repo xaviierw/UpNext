@@ -14,24 +14,19 @@ const Home = () => {
 
     fetch("http://localhost:4000/api/events/personalized", {
       headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
+    }).then((res) => res.json())
       .then((data) => {
         if (data.success) setPersonalizedEvents(data.events);
-      })
-      .catch((err) =>
+      }).catch((err) =>
         console.error("Failed to load personalised events:", err)
-      )
-      .finally(() => setLoadingPersonalized(false));
+      ).finally(() => setLoadingPersonalized(false));
 
     fetch("http://localhost:4000/api/events", {
       headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
+    }).then((res) => res.json())
       .then((data) => {
         if (data.success) setAllEvents(data.events);
-      })
-      .catch((err) => console.error("Failed to load all events:", err))
+      }).catch((err) => console.error("Failed to load all events:", err))
       .finally(() => setLoadingAll(false));
   }, []);
 
@@ -40,7 +35,7 @@ const Home = () => {
       <NavBar />
       <div className="container mt-4">
         <h4 className="fw-semibold mb-3">Based on what you like</h4>
-
+        
         {loadingPersonalized ? (
           <p className="text-center text-muted">Loading your events...</p>
         ) : personalizedEvents.length === 0 ? (

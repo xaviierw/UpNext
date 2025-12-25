@@ -19,7 +19,6 @@ const OrganiserEvent = () => {
         setError("")
 
         const token = localStorage.getItem("token")
-
         const res = await fetch("http://localhost:4000/api/organiser/events", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -82,9 +81,7 @@ const OrganiserEvent = () => {
                     <div className="d-flex justify-content-between align-items-start">
                       <Card.Title className="mb-2" style={{ fontSize: "1.05rem" }}>{event.title || "Untitled Event"}</Card.Title>
 
-                      {event.status !== undefined && (
-                        <Badge bg={event.status === 1 ? "success" : "secondary"}>{event.status === 1 ? "Approved" : "Pending"}</Badge>
-                      )}
+                      {event.status !== undefined && (<Badge bg={event.status === 1 ? "success" : "secondary"}>{event.status === 1 ? "Approved" : "Pending"}</Badge>)}
                     </div>
 
                     <Card.Text className="text-muted mb-2">{event.location || "No location"}</Card.Text>

@@ -24,9 +24,7 @@ const Login = () => {
 
       if (!res.ok) {
         setMessage(
-          data.message ||
-            "Login failed, incorrect email or password. Please try again!."
-        );
+          data.message ||  "Login failed, incorrect email or password. Please try again!.");
         return;
       }
 
@@ -52,7 +50,6 @@ const Login = () => {
 
         <div className="portal-toggle">
           <label><input type="radio" name="portal" value="student" checked={portal === "student"} onChange={() => setPortal("student")}/>Student</label>
-
           <label><input type="radio" name="portal" value="organiser" checked={portal === "organiser"} onChange={() => setPortal("organiser")}/>Organiser</label>
         </div>
 

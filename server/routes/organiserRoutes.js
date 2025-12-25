@@ -4,6 +4,7 @@ import Event from "../models/Event.js";
 
 const router = express.Router();
 
+// POST an event (for organiser)
 router.post("/organiser/events", authenticateToken, requireRole(["organiser"]), async (req, res) => {
   try {
     const {
@@ -21,15 +22,12 @@ router.post("/organiser/events", authenticateToken, requireRole(["organiser"]), 
       personInCharge,
       contact,
     } = req.body;
-
     if (!title || !description || !location || !startDateTime || !endDateTime) {
       return res.status(400).json({ message: "All fields are required" });
     }
-
     if (new Date(endDateTime) <= new Date(startDateTime)) {
       return res.status(400).json({ message: "End date must be after start date" });
     }
-
     const event = await Event.create({
       title,
       description,
@@ -46,7 +44,6 @@ router.post("/organiser/events", authenticateToken, requireRole(["organiser"]), 
       personInCharge,
       contact,
     });
-
     res.status(201).json({ message: "Event created successfully", event });
   } catch (err) {
     console.error(err);
@@ -54,6 +51,7 @@ router.post("/organiser/events", authenticateToken, requireRole(["organiser"]), 
   }
 });
 
+// GET events created by the organiser
 router.get("/organiser/events", authenticateToken, requireRole(["organiser"]), async (req, res) => {
     try {
       const events = await Event.find({organiser: req.user.userId,}).sort({ startDateTime: 1 });
