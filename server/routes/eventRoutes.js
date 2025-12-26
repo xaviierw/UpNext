@@ -13,7 +13,7 @@ router.get("/events", authenticateToken, requireRole(["student"]), async (req, r
     const today = new Date();
     const events = await Event.find({
         registrationDeadline: {$gte: today}
-    }).sort({ startDateTime: 1 });
+    }).sort({ registrationDeadline: 1 });
 
     res.json({ success: true, events });
   } catch (err) {
@@ -47,7 +47,7 @@ router.get("/events/personalized", authenticateToken, requireRole(["student"]), 
     const events = await Event.find({
         ...query,
         registrationDeadline: {$gte:today}
-    }).sort({ startDateTime: 1 });
+    }).sort({ registrationDeadline: 1 });
     res.json({ success: true, events });
   } catch (err) {
     console.error("Error fetching personalized events:", err);
