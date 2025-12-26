@@ -1,3 +1,5 @@
+/* This css is for the all events section and personalize section in the home page*/
+
 .event-card {
   width: 280px;
   border: 2px solid #e3e3e3;
@@ -63,7 +65,6 @@
   font-size: 10px;
 }
 
-/* hidden by default */
 .tags-tooltip {
   display: none;
   position: absolute;
@@ -87,7 +88,6 @@
   padding: 4px 0;
 }
 
-/* show on hover */
 .tags-tooltip-wrapper:hover .tags-tooltip {
   display: block;
   opacity: 1;

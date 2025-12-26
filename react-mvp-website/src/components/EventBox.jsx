@@ -1,3 +1,5 @@
+// This componenet is use in the personalize page
+
 import "./css/EventBox.css";
 
 const EventBox = ({ icon, label, selected, onClick }) => {

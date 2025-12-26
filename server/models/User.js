@@ -1,4 +1,3 @@
-// server/models/User.js
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -31,6 +30,11 @@ const userSchema = new mongoose.Schema(
     eventCategories: {
       type: [String],
       default: [],
+    },
+    role: {
+      type: String,
+      enum: ["student", "organiser", "admin"],
+      default: "student",
     }
   },
   { timestamps: true }

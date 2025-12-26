@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
+import "./Auth.css";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -33,37 +34,40 @@ const Register = () => {
       setTimeout(() => {
         navigate("/login");
       }, 2500);
-    } catch (err) {
-      setMessage("Server error. Try again later.");
-    }
+    } catch (err) {setMessage("Server error. Try again later.");}
   }
 
   return (
-    <div class="registerForm">
-      <h2>Register</h2>
+    <div className="auth-page">
+      <div className="registerForm">
+        <h2>Register</h2>
 
-      {message ? <p>{message}</p> : null}
+        {message ? <p className="auth-message">{message}</p> : null}
 
-      <form onSubmit={handleRegister}>
-        <div>
-          <label>Email:</label><br />
-          <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required/>
-        </div>
+        <form onSubmit={handleRegister}>
+          <div>
+            <label>Email:</label>
+            <br />
+            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required/>
+          </div>
 
-        <div>
-          <label>Username:</label><br />
-          <input type="text" value={username} onChange={(event) => setUserName(event.target.value)} required/>
-        </div>
+          <div>
+            <label>Username:</label>
+            <br />
+            <input type="text" value={username} onChange={(event) => setUserName(event.target.value)} required/>
+          </div>
 
-        <div>
-          <label>Password:</label><br />
-          <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required/>
-        </div>
+          <div>
+            <label>Password:</label>
+            <br />
+            <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required/>
+          </div>
 
-        <button type="submit">Register</button>
-        <br></br>
-        <p>Have an existing account? <a href="/login">Login!</a></p>
-      </form>
+          <button type="submit">Register</button>
+
+          <p>Have an existing account? <Link to="/login">Login!</Link></p>
+        </form>
+      </div>
     </div>
   );
 };
