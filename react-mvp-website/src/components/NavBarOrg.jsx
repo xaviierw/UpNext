@@ -2,7 +2,6 @@
 
 import { Navbar, Nav, Container, NavDropdown, Button } from "react-bootstrap"
 import { Link } from "react-router"
-import NotificationDropdown from "./NotificationDropdown";
 import "../App.css"
 
 const handleLogout = () => {
@@ -25,7 +24,6 @@ const NavBarOrg = () => {
         <Nav className="ms-auto custom-nav mt-2 mt-lg-0">
             <Nav.Link as={Link} to="/organiser/create" className="my-events-create-btn">Create an Event</Nav.Link>
             <Nav.Link as={Link} to="/organiser/event" className="my-events-btn">My Events</Nav.Link>
-            <NotificationDropdown />
             <NavDropdown title="Profile" id="profile-dropdown" align="end">
             <NavDropdown.Item as={Link} to="/account">My Account</NavDropdown.Item>
             <NavDropdown.Item as={Link} to="/settings">Settings</NavDropdown.Item>
