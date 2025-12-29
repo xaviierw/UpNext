@@ -81,7 +81,7 @@ router.get("/me", authenticateToken, requireRole(["student"]), async (req, res) 
   }
 });
 
-// use to update their reminders preferences
+// PUT use to update their reminders preferences
 router.put("/registrations/:id/preferences", authenticateToken, requireRole(["student"]), async (req, res) => {
     const { id } = req.params;
     const userId = req.user.userId; 

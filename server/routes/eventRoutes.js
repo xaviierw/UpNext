@@ -30,24 +30,75 @@ router.get("/events/personalized", authenticateToken, requireRole(["student"]), 
       "eventTypes eventCategories personalized"
     );
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-    let query = {};
-    const orConditions = [];
-    if (user.personalized) {
-      if (user.eventTypes?.length) {
-        orConditions.push({ eventTypes: { $in: user.eventTypes } });
-      }
-      if (user.eventCategories?.length) {
-        orConditions.push({ eventCategories: { $in: user.eventCategories } });
-      }
-      if (orConditions.length > 0) query = { $or: orConditions };
+return res.status(404).json({ success: false, message: "User not found" });
     }
     const today = new Date();
-    const events = await Event.find({
-        ...query,
-        registrationDeadline: {$gte:today}
-    }).sort({ registrationDeadline: 1 });
+    if (!user.personalized) {
+      const events = await Event.find({
+        registrationDeadline: { $gte: today }
+      }).sort({ registrationDeadline: 1 });
+      return res.json({ success: true, events });
+    }
+    const preferredTypes = user.eventTypes || [];
+    const preferredCategories = user.eventCategories || [];
+    if (!preferredTypes.length && !preferredCategories.length) {
+      const events = await Event.find({
+        registrationDeadline: { $gte: today }
+      }).sort({ registrationDeadline: 1 });
+      return res.json({ success: true, events });
+    }
+    const LIMIT = 8;
+    const STRONG_THRESHOLD = 2;
+    const allEvents = await Event.aggregate([
+      {
+        $match: {
+          registrationDeadline: { $gte: today }
+        }
+      },
+      {
+        $addFields: {
+          categoryMatchCount: {
+            $size: {
+              $setIntersection: [
+                { $ifNull: ["$eventCategories", []] },
+                preferredCategories
+              ]
+            }
+          },
+          typeMatchCount: {
+            $size: {
+              $setIntersection: [
+                { $ifNull: ["$eventTypes", []] },
+                preferredTypes
+              ]
+            }
+          }
+        }
+      },
+      {
+        $addFields: {
+          matchScore: {
+            $add: [
+              { $multiply: ["$categoryMatchCount", 2] },
+              { $multiply: ["$typeMatchCount", 1] }
+            ]
+          }
+        }
+      },
+      {
+        $sort: { matchScore: -1, registrationDeadline: 1 }
+      }
+    ]);
+    const strongEvents = allEvents.filter(e => e.matchScore >= STRONG_THRESHOLD);
+    const weakEvents = allEvents.filter(e => e.matchScore > 0 && e.matchScore < STRONG_THRESHOLD);
+    const selectedEvents = [...strongEvents];
+    for (const e of weakEvents) {
+      if (selectedEvents.length >= LIMIT) break;
+      if (!selectedEvents.some(x => String(x._id) === String(e._id))) {
+        selectedEvents.push(e);
+      }
+    }
+    const events = selectedEvents.slice(0, LIMIT);
     res.json({ success: true, events });
   } catch (err) {
     console.error("Error fetching personalized events:", err);

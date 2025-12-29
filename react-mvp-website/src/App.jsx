@@ -18,7 +18,7 @@ const StudentRoute = ({ children }) => {
 
   try {
     const decoded = jwtDecode(token);
-    if (decoded.role !== "student") return <Navigate to="/organiser" replace />;
+    if (decoded.role !== "student") return <Navigate to="/organiser/event" replace />;
     return children;
   } catch {
     return <Navigate to="/login" replace />;

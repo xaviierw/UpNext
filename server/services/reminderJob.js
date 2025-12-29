@@ -120,7 +120,7 @@ export const startThreeDayReminderJob = () => {
         console.log(`   Due within 3 days:      ${due.length}`);
         for (const reg of due) {
           const { user, event } = reg;
-          // EMAIL reminder
+          // email reminder
           if (reg.wantsEmailReminder && !reg.emailReminderSent) {
             await sendEmail(
               user.email,
@@ -135,13 +135,12 @@ export const startThreeDayReminderJob = () => {
                 <p>Start Time: <b>${formatSG(event.startDateTime)}</b></p>
               `
             );
-            // extra safety: only flip if still false (prevents duplicate flips if multiple jobs overlap)
             await EventRegistration.updateOne(
               { _id: reg._id, emailReminderSent: false },
               { $set: { emailReminderSent: true } }
             );
           }
-          // IN-APP reminder
+          // In-app reminder
           if (reg.wantsInAppReminder && !reg.inAppReminderSent) {
             await Notification.create({
               user: user._id,
