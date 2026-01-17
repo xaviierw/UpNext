@@ -21,7 +21,7 @@ const NavBar = () => {
 
         <Navbar.Collapse id="upnext-nav">
           <Nav className="custom-nav nav-left mt-2 mt-lg-0">
-            <Nav.Link as={Link} to="#">Saved</Nav.Link>
+            <Nav.Link as={Link} to="/bookmarks">Saved</Nav.Link>
             <Nav.Link as={Link} to="#">Calendar</Nav.Link>
             <Nav.Link as={Link} to="#">Category</Nav.Link>
           </Nav>
@@ -35,7 +35,7 @@ const NavBar = () => {
             <NotificationDropdown />
 
             <NavDropdown title="Profile" id="profile-dropdown" align="end">
-              <NavDropdown.Item as={Link} to="/account">My Account</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/profile">My Account</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/settings">Settings</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>

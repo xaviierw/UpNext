@@ -10,21 +10,73 @@ const Event = () => {
   const [loading, setLoading] = useState(true);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
 
-  const formatDate = (date) => 
-    date ? new Date(date).toLocaleString("en-SG", {timeZone: "Asia/Singapore", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,}) : "TBA";
+  const [bookmarked, setBookmarked] = useState(false);
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
+
+  const formatDate = (date) =>
+    date
+      ? new Date(date).toLocaleString("en-SG", {timeZone: "Asia/Singapore", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,})
+      : "TBA";
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-  fetch(`http://localhost:4000/api/events/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  }).then((res) => res.json())
-    .then((data) => {
-      if (data.success) setEvent(data.event);
-    }).finally(() => setLoading(false));}, [id]);
+    fetch(`http://localhost:4000/api/events/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then((res) => res.json())
+      .then((data) => {
+        if (data.success) setEvent(data.event);
+      }).finally(() => setLoading(false));
+  }, [id]);
+
+  // NEW: fetch bookmark status
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token || !id) return;
+
+    fetch(`http://localhost:4000/api/events/${id}/bookmark-status`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then((res) => res.json())
+      .then((data) => {
+        if (data.success) setBookmarked(!!data.bookmarked);
+      }).catch((err) => console.error("Failed to load bookmark status:", err));
+  }, [id]);
+
+  const handleToggleBookmark = async () => {
+    const token = localStorage.getItem("token");
+    if (!token || !id) return;
+
+    try {
+      setBookmarkLoading(true);
+
+      const res = await fetch(`http://localhost:4000/api/events/${id}/bookmark`, {
+        method: bookmarked ? "DELETE" : "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        alert(data?.message || "Failed to update bookmark.");
+        setBookmarkLoading(false);
+        return;
+      }
+
+      setBookmarked(!bookmarked);
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while updating bookmark.");
+    } finally {
+      setBookmarkLoading(false);
+    }
+  };
 
   if (loading) return <p>Loading...</p>;
   if (!event) return <p>Event not found.</p>;
+
+  const registrationClosed =
+    event.registrationDeadline &&
+    new Date(event.registrationDeadline) < new Date();
 
   const imgSrc = event.imageURL
     ? event.imageURL.startsWith("http")
@@ -39,15 +91,22 @@ const Event = () => {
         <Row className="g-4">
           <Col lg={8}>
             <Card className="shadow-sm border-0">
-              {imgSrc && (<Card.Img variant="top" src={imgSrc} style={{ maxHeight: "320px", objectFit: "cover" }}/>)}
+              {imgSrc && (
+                <Card.Img
+                  variant="top"
+                  src={imgSrc}
+                  style={{ maxHeight: "320px", objectFit: "cover" }}
+                />
+              )}
               <Card.Body>
                 <Card.Title>{event.title}</Card.Title>
 
                 <div className="mb-3">
                   {[...(event.eventCategories ?? []), ...(event.eventTypes ?? [])].filter(Boolean).map((tag) => (
-                      <Badge bg="light" text="dark" key={tag} className="me-2">#{tag}</Badge>
-                    ))}
+                    <Badge bg="light" text="dark" key={tag} className="me-2">#{tag}</Badge>
+                  ))}
                 </div>
+
                 <h5>Event Description</h5>
                 <Card.Text style={{ whiteSpace: "pre-line" }}>{event.description}</Card.Text>
               </Card.Body>
@@ -66,14 +125,35 @@ const Event = () => {
                 <br />
                 <p><strong>Slots Left:</strong> {event.capacity}</p>
                 <p><strong>Registration Closing Date:</strong>{" "} {formatDate(event.registrationDeadline)}</p>
-                <Button variant="primary" className="w-100 rounded-pill mt-3" onClick={() => setShowRegisterModal(true)}>Register Now!</Button>
-                <Button variant="secondary" className="w-100 rounded-pill mt-3">Bookmark</Button>
+
+                <Button
+                  variant="primary"
+                  className="w-100 rounded-pill mt-3"
+                  onClick={() => setShowRegisterModal(true)}
+                  disabled={registrationClosed || event.capacity <= 0}
+                >
+                  {event.capacity <= 0 ? "Event Full" : registrationClosed ? "Registration Closed" : "Register Now!"}
+                </Button>
+
+                <Button
+                  variant={bookmarked ? "success" : "secondary"}
+                  className="w-100 rounded-pill mt-3"
+                  onClick={handleToggleBookmark}
+                  disabled={bookmarkLoading}
+                >
+                  {bookmarkLoading ? "Saving..." : bookmarked ? "Bookmarked" : "Bookmark"}
+                </Button>
               </Card.Body>
             </Card>
           </Col>
         </Row>
       </Container>
-    <EventRegisterModal show={showRegisterModal} onHide={() => setShowRegisterModal(false)} event={event}/>
+
+      <EventRegisterModal
+        show={showRegisterModal}
+        onHide={() => setShowRegisterModal(false)}
+        event={event}
+      />
     </>
   );
 };

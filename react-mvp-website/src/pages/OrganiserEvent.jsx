@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react"
-import { Container, Row, Col, Card, Badge, Spinner, Alert } from "react-bootstrap"
+import { useNavigate } from "react-router"
+import { Container, Row, Col, Card, Badge, Spinner, Alert, Button } from "react-bootstrap"
 import NavBarOrg from "../components/NavBarOrg"
 
 const formatDateTime = (date) => {
   if (!date) return "—"
-  return new Date(date).toLocaleString("en-SG", {timeZone: "Asia/Singapore", nday: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,})
+  return new Date(date).toLocaleString("en-SG", {timeZone: "Asia/Singapore", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,})
 }
 
 const OrganiserEvent = () => {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+   const navigate = useNavigate()
 
   useEffect(() => {
     const fetchOrganiserEvents = async () => {
@@ -97,6 +99,17 @@ const OrganiserEvent = () => {
                     </div>
 
                     <hr />
+
+                    <div className="d-flex gap-2 mt-3">
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => navigate(`/organiser/events/${event._id}/attendance`)}
+                        disabled={event.status !== 1}  // optional
+                      >
+                        View Attendance
+                      </Button>
+                    </div>
 
                     <Card.Text className="mb-0" style={{ fontSize: "0.95rem" }}>
                       {event.description ? (event.description.length > 140? `${event.description.slice(0, 140)}...`: event.description

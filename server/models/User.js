@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["student", "organiser", "admin"],
       default: "student",
+    },
+    xp: { 
+      type: Number, 
+      default: 0 
     }
   },
   { timestamps: true }
