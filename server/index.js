@@ -14,24 +14,26 @@ import achievementRoutes from "./routes/achievementRoutes.js";
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://localhost:4000",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/images", express.static("public/images"));
 app.use("/icons", express.static("public/icons"));
 app.use("/public", express.static("public"));
-
-
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("MongoDB connected");
-    startThreeDayReminderJob();                      
-  })
-  .catch((err) => console.error("MongoDB connection error:", err));
 
 // Use route modules
 app.use("/api", authRoutes);
@@ -42,4 +44,25 @@ app.use("/api", organiserRoutes);
 app.use("/api", achievementRoutes);
 
 const port = process.env.PORT || 4000;
-app.listen(port, () => console.log(`API listening on ${port}`));
+
+// Connect to MongoDB once, then start server
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("MongoDB connected");
+
+    if (process.env.RUN_JOBS === "true") {
+      startThreeDayReminderJob();
+      console.log("Reminder job started");
+    } else {
+      console.log("Reminder job disabled (RUN_JOBS !== 'true')");
+    }
+
+    app.listen(port, "0.0.0.0", () => {
+      console.log(`API listening on ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
