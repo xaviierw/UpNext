@@ -11,7 +11,7 @@ const handleLogout = () => {
   window.location.href = "/login";
 };
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
 
 const NavBar = () => {
   const [query, setQuery] = useState("");

@@ -2,18 +2,32 @@
 
 .all-events-wrapper {
   width: 100%;
-  max-width: 1000px;   
+  max-width: 1000px;
   margin: 0 auto;
+
+  /* NEW: mobile padding so cards don’t touch the edges */
+  padding: 0 12px;
 }
 
 .all-events-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  justify-content: flex-start;  
+  justify-content: flex-start;
+}
+
+@media (max-width: 575px) {
+  .all-events-grid {
+    justify-content: center; 
+    gap: 12px;
+  }
 }
 
 @media (min-width: 992px) {
+  .all-events-wrapper {
+    padding: 0; 
+  }
+
   .all-events-grid {
     gap: 20px;
   }

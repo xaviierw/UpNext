@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 import EventCarousel from "../components/EventCarousel";
 import AllEventsGrid from "../components/AllEventsGrid";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
 
 const Home = () => {
   const [personalizedEvents, setPersonalizedEvents] = useState([]);

@@ -93,3 +93,29 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+@media (max-width: 575px) {
+  .event-card {
+    width: 100%;
+    max-width: 360px;  
+  }
+
+  .event-card-img-wrapper {
+    height: 160px; 
+  }
+
+  .days-left-badge {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .event-card {
+    max-width: 320px;
+  }
+
+  .event-card-img-wrapper {
+    height: 150px;
+  }
+}

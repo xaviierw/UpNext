@@ -3,7 +3,7 @@ import { Container, Card, Form, Button, Alert, Row, Col } from "react-bootstrap"
 import "./Organiser.css";
 import NavBarOrg from "../components/NavBarOrg";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
 
 const Organiser = () => {
   const [title, setTitle] = useState("");

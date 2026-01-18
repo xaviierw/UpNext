@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import "./Auth.css";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -27,10 +27,12 @@ const Register = () => {
         setMessage(data.message || "Registration failed");
         return;
       }
+
       setMessage("Registration successful! Redirecting to login..");
       setEmail("");
       setUserName("");
       setPassword("");
+
       setTimeout(() => {
         navigate("/login");
       }, 2500);
@@ -50,22 +52,22 @@ const Register = () => {
           <div>
             <label>Email:</label>
             <br />
-            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required/>
+            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" inputMode="email" />
           </div>
 
           <div>
             <label>Username:</label>
             <br />
-            <input type="text" value={username} onChange={(event) => setUserName(event.target.value)} required/>
+            <input type="text" value={username} onChange={(event) => setUserName(event.target.value)} required autoComplete="username" />
           </div>
 
           <div>
             <label>Password:</label>
             <br />
-            <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required/>
+            <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="new-password" />
           </div>
 
-          <button type="submit">Register</button>
+          <button type="submit" disabled={!email || !username || !password}>Register</button>
 
           <p>Have an existing account? <Link to="/login">Login!</Link></p>
         </form>

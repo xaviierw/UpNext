@@ -3,7 +3,7 @@ import { useNavigate } from "react-router"
 import { Container, Row, Col, Card, Badge, Spinner, Alert, Button } from "react-bootstrap"
 import NavBarOrg from "../components/NavBarOrg"
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000"
+const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
 
 const formatDateTime = (date) => {
   if (!date) return "—"

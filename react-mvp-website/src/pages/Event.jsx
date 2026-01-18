@@ -4,7 +4,7 @@ import { Container, Row, Col, Card, Badge, Button } from "react-bootstrap";
 import NavBar from "../components/NavBar";
 import EventRegisterModal from "../components/EventRegisterModal";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
 
 const Event = () => {
   const { id } = useParams();

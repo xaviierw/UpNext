@@ -4,7 +4,7 @@ import { Container, Card, Spinner, Alert, ProgressBar, Button, Modal } from "rea
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
 
 const Profile = () => {
   const [user, setUser] = useState(null);

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Dropdown, Badge, Spinner } from "react-bootstrap";
 import { Link } from "react-router";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
 const formatTime = (date) =>
   new Date(date).toLocaleString("en-SG", {
     timeZone: "Asia/Singapore",
