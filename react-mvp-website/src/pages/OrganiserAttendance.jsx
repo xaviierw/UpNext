@@ -4,17 +4,11 @@ import { useNavigate } from "react-router"
 import { Container, Card, Table, Badge, Spinner, Alert, Button, Form } from "react-bootstrap"
 import NavBarOrg from "../components/NavBarOrg"
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000"
+
 const formatDateTime = (date) => {
   if (!date) return "—"
-  return new Date(date).toLocaleString("en-SG", {
-    timeZone: "Asia/Singapore",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  })
+  return new Date(date).toLocaleString("en-SG", { timeZone: "Asia/Singapore", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,})
 }
 
 const statusBadge = (status) => {
@@ -26,12 +20,10 @@ const statusBadge = (status) => {
 const OrganiserAttendance = () => {
   const { eventId } = useParams()
   const navigate = useNavigate()
-
   const [event, setEvent] = useState(null)
   const [attendance, setAttendance] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-
   const [filterStatus, setFilterStatus] = useState("all")
   const [selectedIds, setSelectedIds] = useState([])
   const [saving, setSaving] = useState(false)
@@ -45,14 +37,11 @@ const OrganiserAttendance = () => {
       setSelectedIds([])
 
       const token = localStorage.getItem("token")
-
-      const res = await fetch(
-        `http://localhost:4000/api/organiser/events/${eventId}/attendance`,
-        { headers: { Authorization: `Bearer ${token}` } }
+      const res = await fetch(`${BACKEND_URL}/api/organiser/events/${eventId}/attendance`,{ 
+        headers: { Authorization: `Bearer ${token}` } }
       )
 
       const data = await res.json()
-
       if (!res.ok) {
         setError(data?.message || "Failed to load attendance.")
         return
@@ -86,11 +75,10 @@ const OrganiserAttendance = () => {
 
   const toggleAllVisible = () => {
     const selectableVisibleIds = filteredAttendance
-      .filter((a) => a.status !== 1 && a.status !== 2) // only allow Registered to be selected
+      .filter((a) => a.status !== 1 && a.status !== 2)
       .map((a) => a.registrationId)
 
     const allSelected = selectableVisibleIds.every((id) => selectedIds.includes(id))
-
     if (allSelected) {
       setSelectedIds((prev) => prev.filter((id) => !selectableVisibleIds.includes(id)))
       return
@@ -110,9 +98,7 @@ const OrganiserAttendance = () => {
       setSuccessMsg("")
 
       const token = localStorage.getItem("token")
-
-      const res = await fetch(
-        `http://localhost:4000/api/organiser/events/${eventId}/attendance/mark-present`,
+      const res = await fetch(`${BACKEND_URL}/api/organiser/events/${eventId}/attendance/mark-present`,
         {
           method: "POST",
           headers: {
@@ -124,7 +110,6 @@ const OrganiserAttendance = () => {
       )
 
       const data = await res.json()
-
       if (!res.ok) {
         setError(data?.message || "Failed to mark present.")
         return
@@ -141,9 +126,7 @@ const OrganiserAttendance = () => {
   }
 
   const selectableCount = filteredAttendance.filter((a) => a.status !== 1 && a.status !== 2).length
-  const allVisibleSelected =
-    selectableCount > 0 &&
-    filteredAttendance
+  const allVisibleSelected = selectableCount > 0 && filteredAttendance
       .filter((a) => a.status !== 1 && a.status !== 2)
       .every((a) => selectedIds.includes(a.registrationId))
 
@@ -155,9 +138,7 @@ const OrganiserAttendance = () => {
       <Container>
         <div className="d-flex align-items-center justify-content-between mb-3">
           <h3 className="mb-0">Attendance Sheet</h3>
-          <Button variant="outline-secondary" size="sm" onClick={() => navigate(-1)}>
-            Back
-          </Button>
+          <Button variant="outline-secondary" size="sm" onClick={() => navigate(-1)}>Back</Button>
         </div>
 
         {loading && (
@@ -205,32 +186,18 @@ const OrganiserAttendance = () => {
                     <option value="2">Cancelled</option>
                   </select>
 
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    disabled={selectedIds.length === 0 || saving}
-                    onClick={markPresent}
-                  >
-                    {saving ? "Saving..." : `Mark Present (${selectedIds.length})`}
-                  </Button>
+                  <Button variant="primary" size="sm" disabled={selectedIds.length === 0 || saving} onClick={markPresent}>{saving ? "Saving..." : `Mark Present (${selectedIds.length})`}</Button>
                 </div>
               </div>
 
               {filteredAttendance.length === 0 ? (
-                <Alert variant="info" className="mb-0">
-                  No attendees for the selected filter.
-                </Alert>
+                <Alert variant="info" className="mb-0">No attendees for the selected filter.</Alert>
               ) : (
                 <Table responsive hover className="mb-0 align-middle">
                   <thead>
                     <tr>
                       <th style={{ width: "6%" }}>
-                        <Form.Check
-                          type="checkbox"
-                          checked={allVisibleSelected}
-                          disabled={selectableCount === 0}
-                          onChange={toggleAllVisible}
-                        />
+                        <Form.Check type="checkbox" checked={allVisibleSelected} disabled={selectableCount === 0} onChange={toggleAllVisible}/>
                       </th>
                       <th style={{ width: "26%" }}>Name</th>
                       <th style={{ width: "28%" }}>Email</th>
@@ -247,12 +214,7 @@ const OrganiserAttendance = () => {
                       return (
                         <tr key={a.registrationId}>
                           <td>
-                            <Form.Check
-                              type="checkbox"
-                              checked={checked}
-                              disabled={disabled}
-                              onChange={() => toggleOne(a.registrationId)}
-                            />
+                            <Form.Check type="checkbox" checked={checked} disabled={disabled} onChange={() => toggleOne(a.registrationId)}/>
                           </td>
                           <td>{a.name}</td>
                           <td>{a.email}</td>
@@ -273,9 +235,7 @@ const OrganiserAttendance = () => {
                 </Table>
               )}
 
-              <div className="text-muted small mt-3">
-                Note: Only <strong>Registered</strong> attendees can be marked present. Cancelled / Attended are disabled.
-              </div>
+              <div className="text-muted small mt-3">Note: Only <strong>Registered</strong> attendees can be marked present. Cancelled / Attended are disabled.</div>
             </Card.Body>
           </Card>
         )}

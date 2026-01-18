@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { Modal, Button, Spinner } from "react-bootstrap";
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
 const EventRegisterModal = ({ show, onHide, event }) => {
   const [step, setStep] = useState(1); // 1 is review their personal information then 2 is terms and conditions afterwards its success message and set their preferences
 
@@ -29,11 +31,9 @@ const EventRegisterModal = ({ show, onHide, event }) => {
     }
 
     if (!token || !event?._id) return;
-
     setLoadingUser(true);
 
-    fetch("http://localhost:4000/api/me", {
-      headers: { Authorization: `Bearer ${token}` },
+    fetch(`${BACKEND_URL}/api/me`, {headers: { Authorization: `Bearer ${token}` },
     }).then((res) => res.json())
       .then((data) => {
         if (data.success) setUser(data.user);
@@ -41,26 +41,21 @@ const EventRegisterModal = ({ show, onHide, event }) => {
       .finally(() => setLoadingUser(false));
   }, [show]);
 
-  const formatDate = (date) =>
-    date
-      ? new Date(date).toLocaleString("en-SG", {day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,}): "TBA";
+  const formatDate = (date) => date ? new Date(date).toLocaleString("en-SG", {day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,}) : "TBA";
 
   // register user for event
   const handleConfirm = async () => {
     if (!token || !event?._id) return;
-
     try {
       setSubmitting(true);
-
-      const res = await fetch(`http://localhost:4000/api/events/${event._id}/register`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({}),
-        }
-      );
+      const res = await fetch(`${BACKEND_URL}/api/events/${event._id}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      });
 
       if (!res.ok) {
         const text = await res.text();
@@ -69,20 +64,21 @@ const EventRegisterModal = ({ show, onHide, event }) => {
       }
 
       const data = await res.json();
-
-      if (!data.success) {console.error(data.message || "Failed to register for event");
+      if (!data.success) {
+        console.error(data.message || "Failed to register for event");
         return;
       }
-
       // store registration so know which one to update
       setRegistration(data.registration);
       setStep(3);
-    } catch (err) {console.error("Failed to register:", err);
-    } finally {setSubmitting(false);
+    } catch (err) {
+      console.error("Failed to register:", err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  // Step 3 save reminder preferences
+  // save reminder preferences
   const handleSavePreferences = async () => {
     if (!token || !registration?._id) {
       onHide();
@@ -90,9 +86,7 @@ const EventRegisterModal = ({ show, onHide, event }) => {
     }
     try {
       setSavingPrefs(true);
-      const res = await fetch(
-        `http://localhost:4000/api/registrations/${registration._id}/preferences`,
-        {
+      const res = await fetch(`${BACKEND_URL}/api/registrations/${registration._id}/preferences`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -109,9 +103,12 @@ const EventRegisterModal = ({ show, onHide, event }) => {
         const text = await res.text();
         console.error("Failed to save preferences:", res.status, text);
       }
-    } catch (err) {console.error("Error saving reminder preferences:", err);
-
-    } finally {setSavingPrefs(false); onHide();}
+    } catch (err) {
+      console.error("Error saving reminder preferences:", err);
+    } finally {
+      setSavingPrefs(false);
+      onHide();
+    }
   };
 
   return (
@@ -143,7 +140,6 @@ const EventRegisterModal = ({ show, onHide, event }) => {
       {step === 2 && (
         <>
           <Modal.Header closeButton><Modal.Title>Terms &amp; Conditions</Modal.Title></Modal.Header>
-
           <Modal.Body>
             <ol>
               <li>Your registration details will be shared with the organiser.</li>
@@ -154,8 +150,10 @@ const EventRegisterModal = ({ show, onHide, event }) => {
           </Modal.Body>
 
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setStep(1)}>Bac</Button>
-            <Button variant="primary" onClick={handleConfirm} disabled={submitting}>{submitting ? "Registering..." : "Confirm registration"}</Button>
+            <Button variant="secondary" onClick={() => setStep(1)}>Back</Button>
+            <Button variant="primary" onClick={handleConfirm} disabled={submitting}>
+              {submitting ? "Registering..." : "Confirm registration"}
+            </Button>
           </Modal.Footer>
         </>
       )}
@@ -163,7 +161,6 @@ const EventRegisterModal = ({ show, onHide, event }) => {
       {step === 3 && (
         <>
           <Modal.Header closeButton><Modal.Title>Success</Modal.Title></Modal.Header>
-
           <Modal.Body className="text-center">
             <div style={{ fontSize: "2.5rem", marginBottom: "0.5rem" }}>✓</div>
             <h5>Thank you for your registration!</h5>
@@ -173,19 +170,21 @@ const EventRegisterModal = ({ show, onHide, event }) => {
 
             <div className="mt-3 text-start">
               <div className="form-check form-switch mb-2">
-                <input className="form-check-input" type="checkbox" id="emailReminderSwitch" checked={emailOptIn} onChange={(e) => setEmailOptIn(e.target.checked)}/>
+                <input className="form-check-input" type="checkbox" id="emailReminderSwitch" checked={emailOptIn} onChange={(e) => setEmailOptIn(e.target.checked)} />
                 <label className="form-check-label" htmlFor="emailReminderSwitch">Receive Email Reminders</label>
               </div>
 
               <div className="form-check form-switch">
-                <input className="form-check-input" type="checkbox" id="inAppReminderSwitch" checked={inAppOptIn} onChange={(e) => setInAppOptIn(e.target.checked)}/>
+                <input className="form-check-input" type="checkbox" id="inAppReminderSwitch" checked={inAppOptIn} onChange={(e) => setInAppOptIn(e.target.checked)} />
                 <label className="form-check-label" htmlFor="inAppReminderSwitch">Receive Alerts in Notifications</label>
               </div>
             </div>
           </Modal.Body>
 
           <Modal.Footer>
-            <Button variant="primary" onClick={handleSavePreferences}disabled={savingPrefs}>{savingPrefs ? "Saving..." : "Continue"}</Button>
+            <Button variant="primary" onClick={handleSavePreferences} disabled={savingPrefs}>
+              {savingPrefs ? "Saving..." : "Continue"}
+            </Button>
           </Modal.Footer>
         </>
       )}

@@ -82,21 +82,19 @@ router.get("/me", authenticateToken, requireRole(["student"]), async (req, res) 
   }
 });
 
-router.get("/users/me", authenticateToken, async (req, res) => {
+// GET user profile page
+router.get("/users/me", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
     const userId = req.user.userId;
-
     const user = await User.findById(userId).select(
       "username email role eventTypes eventCategories xp"
     );
-
     if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
-
     res.json({
       success: true,
       user,
@@ -191,7 +189,6 @@ router.put("/registrations/:id/cancel", authenticateToken, requireRole(["student
       { status: 2 },
       { new: true }
     );
-
     if (!reg) {
       return res.status(404).json({
         success: false,
@@ -217,6 +214,7 @@ router.put("/registrations/:id/cancel", authenticateToken, requireRole(["student
   }
 });
 
+// GET user bookmarked items
 router.get("/bookmarks", authenticateToken, requireRole(["student"]), async (req, res) => {
   const userId = req.user.userId
 
@@ -283,6 +281,5 @@ router.delete("/events/:eventId/bookmark", authenticateToken, requireRole(["stud
     })
   }
 })
-
 
 export default router;

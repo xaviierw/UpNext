@@ -4,58 +4,56 @@ import { Container, Row, Col, Card, Badge, Button } from "react-bootstrap";
 import NavBar from "../components/NavBar";
 import EventRegisterModal from "../components/EventRegisterModal";
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
 const Event = () => {
   const { id } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-
   const [bookmarked, setBookmarked] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
-  const formatDate = (date) =>
-    date
-      ? new Date(date).toLocaleString("en-SG", {timeZone: "Asia/Singapore", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,})
-      : "TBA";
+  const formatDate = (date) => date ? new Date(date).toLocaleString("en-SG", { timeZone: "Asia/Singapore", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,}) : "TBA";
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
-    fetch(`http://localhost:4000/api/events/${id}`, {
+    fetch(`${BACKEND_URL}/api/events/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
-    }).then((res) => res.json())
+    })
+      .then((res) => res.json())
       .then((data) => {
         if (data.success) setEvent(data.event);
-      }).finally(() => setLoading(false));
+      })
+      .finally(() => setLoading(false));
   }, [id]);
 
-  // NEW: fetch bookmark status
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token || !id) return;
 
-    fetch(`http://localhost:4000/api/events/${id}/bookmark-status`, {
+    fetch(`${BACKEND_URL}/api/events/${id}/bookmark-status`, {
       headers: { Authorization: `Bearer ${token}` },
-    }).then((res) => res.json())
+    })
+      .then((res) => res.json())
       .then((data) => {
         if (data.success) setBookmarked(!!data.bookmarked);
-      }).catch((err) => console.error("Failed to load bookmark status:", err));
+      })
+      .catch((err) => console.error("Failed to load bookmark status:", err));
   }, [id]);
 
   const handleToggleBookmark = async () => {
     const token = localStorage.getItem("token");
     if (!token || !id) return;
-
     try {
       setBookmarkLoading(true);
 
-      const res = await fetch(`http://localhost:4000/api/events/${id}/bookmark`, {
+      const res = await fetch(`${BACKEND_URL}/api/events/${id}/bookmark`, {
         method: bookmarked ? "DELETE" : "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await res.json().catch(() => null);
-
       if (!res.ok) {
         alert(data?.message || "Failed to update bookmark.");
         setBookmarkLoading(false);
@@ -75,13 +73,12 @@ const Event = () => {
   if (!event) return <p>Event not found.</p>;
 
   const registrationClosed =
-    event.registrationDeadline &&
-    new Date(event.registrationDeadline) < new Date();
+    event.registrationDeadline && new Date(event.registrationDeadline) < new Date();
 
   const imgSrc = event.imageURL
     ? event.imageURL.startsWith("http")
       ? event.imageURL
-      : `http://localhost:4000${event.imageURL}`
+      : `${BACKEND_URL}${event.imageURL}`
     : "";
 
   return (
@@ -102,13 +99,19 @@ const Event = () => {
                 <Card.Title>{event.title}</Card.Title>
 
                 <div className="mb-3">
-                  {[...(event.eventCategories ?? []), ...(event.eventTypes ?? [])].filter(Boolean).map((tag) => (
-                    <Badge bg="light" text="dark" key={tag} className="me-2">#{tag}</Badge>
-                  ))}
+                  {[...(event.eventCategories ?? []), ...(event.eventTypes ?? [])]
+                    .filter(Boolean)
+                    .map((tag) => (
+                      <Badge bg="light" text="dark" key={tag} className="me-2">
+                        #{tag}
+                      </Badge>
+                    ))}
                 </div>
 
                 <h5>Event Description</h5>
-                <Card.Text style={{ whiteSpace: "pre-line" }}>{event.description}</Card.Text>
+                <Card.Text style={{ whiteSpace: "pre-line" }}>
+                  {event.description}
+                </Card.Text>
               </Card.Body>
             </Card>
           </Col>
@@ -118,29 +121,23 @@ const Event = () => {
               <Card.Body>
                 <h5 className="text-center">Details</h5>
                 <br />
-                <p><strong>Event Date:</strong>{" "} {formatDate(event.startDateTime)} - {formatDate(event.endDateTime)}</p>
-                <p><strong>Venue:</strong> {event.location ?? "TBA"}</p>
-                <p><strong>Person-in-Charge:</strong>{" "} {event.personInCharge ?? "TBA"}</p>
-                <p><strong>Contact:</strong> {event.contact ?? "TBA"}</p>
+                <p><strong>Event Date:</strong>{" "}{formatDate(event.startDateTime)} - {formatDate(event.endDateTime)}</p>
+                <p><strong>Venue:</strong>{event.location ?? "TBA"}</p>
+                <p><strong>Person-in-Charge:</strong>{" "}{event.personInCharge ?? "TBA"}</p>
+                <p><strong>Contact:</strong>{event.contact ?? "TBA"}</p>
                 <br />
                 <p><strong>Slots Left:</strong> {event.capacity}</p>
-                <p><strong>Registration Closing Date:</strong>{" "} {formatDate(event.registrationDeadline)}</p>
+                <p><strong>Registration Closing Date:</strong>{" "}{formatDate(event.registrationDeadline)}</p>
 
-                <Button
-                  variant="primary"
-                  className="w-100 rounded-pill mt-3"
-                  onClick={() => setShowRegisterModal(true)}
-                  disabled={registrationClosed || event.capacity <= 0}
-                >
-                  {event.capacity <= 0 ? "Event Full" : registrationClosed ? "Registration Closed" : "Register Now!"}
+                <Button variant="primary" className="w-100 rounded-pill mt-3" onClick={() => setShowRegisterModal(true)}disabled={registrationClosed || event.capacity <= 0}>
+                  {event.capacity <= 0
+                    ? "Event Full"
+                    : registrationClosed
+                    ? "Registration Closed"
+                    : "Register Now!"}
                 </Button>
 
-                <Button
-                  variant={bookmarked ? "success" : "secondary"}
-                  className="w-100 rounded-pill mt-3"
-                  onClick={handleToggleBookmark}
-                  disabled={bookmarkLoading}
-                >
+                <Button variant={bookmarked ? "success" : "secondary"} className="w-100 rounded-pill mt-3" onClick={handleToggleBookmark}disabled={bookmarkLoading}>
                   {bookmarkLoading ? "Saving..." : bookmarked ? "Bookmarked" : "Bookmark"}
                 </Button>
               </Card.Body>
@@ -148,7 +145,6 @@ const Event = () => {
           </Col>
         </Row>
       </Container>
-
       <EventRegisterModal
         show={showRegisterModal}
         onHide={() => setShowRegisterModal(false)}

@@ -42,7 +42,5 @@ const eventRegistrationSchema = new mongoose.Schema(
 );
 
 eventRegistrationSchema.index({ user: 1, event: 1, status: 1 }, { unique: true });
-
 const EventRegistration = mongoose.model("EventRegistration", eventRegistrationSchema);
-
 export default EventRegistration;

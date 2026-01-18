@@ -70,70 +70,10 @@ router.get("/organiser/events", authenticateToken, requireRole(["organiser"]), a
 );
 
 // GET attendance sheet for organiser's event
-router.get(
-  "/organiser/events/:eventId/attendance",
-  authenticateToken,
-  requireRole(["organiser"]),
-  async (req, res) => {
-    try {
-      const { eventId } = req.params;
-      const organiserId = req.user.userId;
-
-      // 1) Verify event exists & belongs to organiser
-      const event = await Event.findOne({
-        _id: eventId,
-        organiser: organiserId,
-      });
-
-      if (!event) {
-        return res.status(404).json({
-          success: false,
-          message: "Event not found or unauthorized access",
-        });
-      }
-
-      // 2) Fetch registrations
-      const registrations = await EventRegistration.find({ event: eventId })
-        .populate("user", "username email")
-        .sort({ createdAt: 1 });
-
-      // 3) Format attendance sheet
-      const attendanceSheet = registrations.map((r) => ({
-        registrationId: r._id,
-        name: r.user?.username || "Unknown",
-        email: r.user?.email || "Unknown",
-        status: r.status, // 0 = registered, 1 = attended, 2 = cancelled (example)
-        wantsEmailReminder: r.wantsEmailReminder,
-        wantsInAppReminder: r.wantsInAppReminder,
-        registeredAt: r.createdAt,
-      }));
-
-      return res.json({
-        success: true,
-        event: {
-          id: event._id,
-          title: event.title,
-          startDateTime: event.startDateTime,
-          endDateTime: event.endDateTime,
-          location: event.location,
-        },
-        attendance: attendanceSheet,
-      });
-    } catch (err) {
-      console.error("Attendance fetch error:", err);
-      return res.status(500).json({
-        success: false,
-        message: "Server error",
-      });
-    }
-  }
-);
-
 router.get("/organiser/events/:eventId/attendance", authenticateToken, requireRole(["organiser"]), async (req, res) => {
     try {
       const { eventId } = req.params
       const organiserId = req.user.userId
-
       // 1) Make sure this event belongs to the organiser
       const event = await Event.findOne({ _id: eventId, organiser: organiserId })
         .select("title startDateTime endDateTime location")
@@ -147,14 +87,14 @@ router.get("/organiser/events/:eventId/attendance", authenticateToken, requireRo
 
       // 2) Fetch registrations for this event
       const registrations = await EventRegistration.find({ event: eventId })
-        .populate("user", "name email") // adjust fields if your User schema uses firstName/lastName
+        .populate("user", "username email") 
         .sort({ createdAt: 1 })
 
       // 3) Attendance sheet rows
       const attendance = registrations.map((r) => ({
         registrationId: r._id,
         userId: r.user?._id || r.user,
-        name: r.user?.name || "Unknown",
+        name: r.user?.username || "Unknown",
         email: r.user?.email || "Unknown",
         status: r.status, // your enum: 0/1/2
         wantsEmailReminder: r.wantsEmailReminder,
@@ -179,11 +119,7 @@ router.get("/organiser/events/:eventId/attendance", authenticateToken, requireRo
   }
 )
 
-router.post(
-  "/organiser/events/:eventId/attendance/mark-present",
-  authenticateToken,
-  requireRole(["organiser"]),
-  async (req, res) => {
+router.post("/organiser/events/:eventId/attendance/mark-present", authenticateToken, requireRole(["organiser"]), async (req, res) => {
     try {
       const { eventId } = req.params
       const organiserId = req.user.userId
@@ -231,7 +167,7 @@ router.post(
         { $set: { status: 1 } }
       )
 
-      // 3) Compute attended counts per user (after update)
+      // 3) Compute attended counts per user
       const counts = await EventRegistration.aggregate([
         { $match: { user: { $in: userIds.map((id) => new mongoose.Types.ObjectId(id)) }, status: 1 } },
         { $group: { _id: "$user", attendedCount: { $sum: 1 } } },

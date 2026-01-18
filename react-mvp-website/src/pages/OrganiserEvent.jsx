@@ -3,6 +3,8 @@ import { useNavigate } from "react-router"
 import { Container, Row, Col, Card, Badge, Spinner, Alert, Button } from "react-bootstrap"
 import NavBarOrg from "../components/NavBarOrg"
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000"
+
 const formatDateTime = (date) => {
   if (!date) return "—"
   return new Date(date).toLocaleString("en-SG", {timeZone: "Asia/Singapore", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,})
@@ -12,23 +14,21 @@ const OrganiserEvent = () => {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-   const navigate = useNavigate()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchOrganiserEvents = async () => {
       try {
         setLoading(true)
         setError("")
-
         const token = localStorage.getItem("token")
-        const res = await fetch("http://localhost:4000/api/organiser/events", {
+        const res = await fetch(`${BACKEND_URL}/api/organiser/events`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
 
         const data = await res.json()
-
         if (!res.ok) {
           setError(data?.message || "Failed to load organiser events.")
           setLoading(false)
@@ -36,7 +36,6 @@ const OrganiserEvent = () => {
         }
 
         const fetchedEvents = Array.isArray(data) ? data : data?.events || []
-
         setEvents(fetchedEvents)
       } catch (err) {
         console.error(err)
@@ -81,12 +80,20 @@ const OrganiserEvent = () => {
                 <Card className="shadow-sm h-100" style={{ borderRadius: "12px" }}>
                   <Card.Body>
                     <div className="d-flex justify-content-between align-items-start">
-                      <Card.Title className="mb-2" style={{ fontSize: "1.05rem" }}>{event.title || "Untitled Event"}</Card.Title>
+                      <Card.Title className="mb-2" style={{ fontSize: "1.05rem" }}>
+                        {event.title || "Untitled Event"}
+                      </Card.Title>
 
-                      {event.status !== undefined && (<Badge bg={event.status === 1 ? "success" : "secondary"}>{event.status === 1 ? "Approved" : "Pending"}</Badge>)}
+                      {event.status !== undefined && (
+                        <Badge bg={event.status === 1 ? "success" : "secondary"}>
+                          {event.status === 1 ? "Approved" : "Pending"}
+                        </Badge>
+                      )}
                     </div>
 
-                    <Card.Text className="text-muted mb-2">{event.location || "No location"}</Card.Text>
+                    <Card.Text className="text-muted mb-2">
+                      {event.location || "No location"}
+                    </Card.Text>
 
                     <div className="mb-2">
                       <div className="small text-muted">Start</div>
@@ -101,18 +108,13 @@ const OrganiserEvent = () => {
                     <hr />
 
                     <div className="d-flex gap-2 mt-3">
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        onClick={() => navigate(`/organiser/events/${event._id}/attendance`)}
-                        disabled={event.status !== 1}  // optional
-                      >
-                        View Attendance
-                      </Button>
+                      <Button variant="outline-primary" size="sm" onClick={() => navigate(`/organiser/events/${event._id}/attendance`)} disabled={event.status !== 1}>View Attendance</Button>
                     </div>
 
                     <Card.Text className="mb-0" style={{ fontSize: "0.95rem" }}>
-                      {event.description ? (event.description.length > 140? `${event.description.slice(0, 140)}...`: event.description
+                      {event.description ? (event.description.length > 140
+                          ? `${event.description.slice(0, 140)}...`
+                          : event.description
                       ) : (
                         <span className="text-muted">No description</span>
                       )}

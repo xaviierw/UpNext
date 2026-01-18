@@ -20,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/images", express.static("public/images"));
+app.use("/icons", express.static("public/icons"));
 app.use("/public", express.static("public"));
 
 

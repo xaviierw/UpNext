@@ -17,10 +17,9 @@ const NavBarOrg = () => {
       <Container fluid>
         
         <Navbar.Brand as={Link} to="/"><img src="/icons/Upnext.png" alt="logo" style={{ height: "45px", width: "auto" }}/></Navbar.Brand>
-
         <Navbar.Toggle aria-controls="upnext-nav" className="custom-collapse" />
-
         <Navbar.Collapse id="upnext-nav">
+
         <Nav className="ms-auto custom-nav mt-2 mt-lg-0">
             <Nav.Link as={Link} to="/organiser/create" className="my-events-create-btn">Create an Event</Nav.Link>
             <Nav.Link as={Link} to="/organiser/event" className="my-events-btn">My Events</Nav.Link>

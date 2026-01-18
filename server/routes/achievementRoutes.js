@@ -6,11 +6,7 @@ import { authenticateToken, requireRole } from "../middleware/auth.js";
 const router = express.Router();
 
 // GET all achievements (master list)
-router.get(
-  "/achievements",
-  authenticateToken,
-  requireRole(["student"]),
-  async (req, res) => {
+router.get("/achievements", authenticateToken, requireRole(["student"]), async (req, res) => {
     try {
       const achievements = await Achievement.find().sort({ createdAt: 1 });
       return res.json({ success: true, achievements });
@@ -22,11 +18,7 @@ router.get(
 );
 
 // GET current user's earned achievements
-router.get(
-  "/achievements/me",
-  authenticateToken,
-  requireRole(["student"]),
-  async (req, res) => {
+router.get("/achievements/me", authenticateToken, requireRole(["student"]), async (req, res) => {
     try {
       const userId = req.user.userId;
 

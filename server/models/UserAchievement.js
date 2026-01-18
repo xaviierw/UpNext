@@ -7,6 +7,7 @@ const userAchievementSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
     achievement: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Achievement",

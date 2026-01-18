@@ -27,13 +27,11 @@ const NavBar = () => {
           </Nav>
 
           <Form className="d-flex flex-grow-1 mx-lg-3 my-2 my-lg-0 nav-search-wrapper"><FormControl type="search" placeholder="Search events..." className="nav-search-input"/></Form> {/* Search Bar */}
-
           <Nav className="custom-nav nav-right mt-2 mt-lg-0">
 
             <Nav.Link as={Link} to="/myevents" className="my-events-btn">My Events</Nav.Link>
 
             <NotificationDropdown />
-
             <NavDropdown title="Profile" id="profile-dropdown" align="end">
               <NavDropdown.Item as={Link} to="/profile">My Account</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/settings">Settings</NavDropdown.Item>

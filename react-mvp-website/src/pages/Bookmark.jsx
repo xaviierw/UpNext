@@ -3,17 +3,11 @@ import { Container, Row, Col, Card, Badge, Spinner, Alert, Button } from "react-
 import { useNavigate } from "react-router"
 import NavBar from "../components/NavBar"
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000"
+
 const formatDateTime = (date) => {
   if (!date) return "—"
-  return new Date(date).toLocaleString("en-SG", {
-    timeZone: "Asia/Singapore",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  })
+  return new Date(date).toLocaleString("en-SG", {timeZone: "Asia/Singapore", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true,})
 }
 
 const Bookmark = () => {
@@ -27,15 +21,13 @@ const Bookmark = () => {
       try {
         setLoading(true)
         setError("")
-
         const token = localStorage.getItem("token")
 
-        const res = await fetch("http://localhost:4000/api/bookmarks", {
+        const res = await fetch(`${BACKEND_URL}/api/bookmarks`, {
           headers: { Authorization: `Bearer ${token}` },
         })
 
         const data = await res.json()
-
         if (!res.ok) {
           setError(data?.message || "Failed to load bookmarks.")
           return
@@ -49,24 +41,19 @@ const Bookmark = () => {
         setLoading(false)
       }
     }
-
     fetchBookmarks()
   }, [])
 
   const handleRemove = async (eventId) => {
     try {
       const token = localStorage.getItem("token")
-
-      const res = await fetch(
-        `http://localhost:4000/api/events/${eventId}/bookmark`,
-        {
+      const res = await fetch(`${BACKEND_URL}/api/events/${eventId}/bookmark`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         }
       )
 
       const data = await res.json().catch(() => null)
-
       if (!res.ok) {
         alert(data?.message || "Failed to remove bookmark.")
         return
@@ -103,9 +90,7 @@ const Bookmark = () => {
         )}
 
         {!loading && !error && bookmarks.length === 0 && (
-          <Alert variant="info">
-            You have no bookmarked events yet.
-          </Alert>
+          <Alert variant="info">You have no bookmarked events yet.</Alert>
         )}
 
         {!loading && !error && bookmarks.length > 0 && (
@@ -117,7 +102,7 @@ const Bookmark = () => {
               const imgSrc = event.imageURL
                 ? event.imageURL.startsWith("http")
                   ? event.imageURL
-                  : `http://localhost:4000${event.imageURL}`
+                  : `${BACKEND_URL}${event.imageURL}`
                 : ""
 
               return (
@@ -136,34 +121,16 @@ const Bookmark = () => {
                     )}
 
                     <Card.Body>
-                      <Card.Title style={{ fontSize: "1.05rem" }}>
-                        {event.title || "Untitled Event"}
-                      </Card.Title>
-
-                      <Card.Text className="text-muted mb-2">
-                        {event.location || "No location"}
-                      </Card.Text>
-
+                      <Card.Title style={{ fontSize: "1.05rem" }}>{event.title || "Untitled Event"}</Card.Title>
+                      <Card.Text className="text-muted mb-2">{event.location || "No location"}</Card.Text>
                       <div className="small text-muted">Event Date</div>
-                      <div className="mb-2">
-                        {formatDateTime(event.startDateTime)}
-                      </div>
-
+                      <div className="mb-2">{formatDateTime(event.startDateTime)}</div>
                       <div className="small text-muted">Saved On</div>
                       <div>{formatDateTime(b.createdAt)}</div>
 
-                      {/* ✅ REMOVE BUTTON */}
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        className="mt-3"
-                        onClick={(e) => {
-                          e.stopPropagation()
+                      <Button variant="outline-danger" size="sm" className="mt-3" onClick={(e) => {e.stopPropagation()
                           handleRemove(event._id)
-                        }}
-                      >
-                        Remove
-                      </Button>
+                        }}>Remove</Button>
                     </Card.Body>
                   </Card>
                 </Col>

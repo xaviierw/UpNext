@@ -152,7 +152,7 @@ router.post("/events/:eventId/register", authenticateToken, requireRole(["studen
       });
     }
 
-    // NEW) Check registration deadline
+    // Check registration deadline
     const eventCheck = await Event.findById(eventId).select("registrationDeadline capacity");
     if (!eventCheck) {
       return res.status(404).json({
@@ -241,6 +241,7 @@ router.post("/events/:eventId/register", authenticateToken, requireRole(["studen
   }
 });
 
+// Bookmark an event
 router.post("/events/:eventId/bookmark", authenticateToken, requireRole(["student"]), async (req, res) => {
   const { eventId } = req.params
   const userId = req.user.userId
@@ -305,6 +306,7 @@ router.post("/events/:eventId/bookmark", authenticateToken, requireRole(["studen
   }
 })
 
+// GET Bookmark status, Check if user already Bookmarked the event
 router.get("/events/:eventId/bookmark-status", authenticateToken, requireRole(["student"]), async (req, res) => {
   const { eventId } = req.params
   const userId = req.user.userId
