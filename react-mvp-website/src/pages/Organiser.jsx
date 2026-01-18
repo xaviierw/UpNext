@@ -3,6 +3,8 @@ import { Container, Card, Form, Button, Alert, Row, Col } from "react-bootstrap"
 import "./Organiser.css";
 import NavBarOrg from "../components/NavBarOrg";
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
 const Organiser = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -35,7 +37,6 @@ const Organiser = () => {
 
     try {
       const token = localStorage.getItem("token");
-
       const formData = new FormData();
       formData.append("title", title);
       formData.append("description", description);
@@ -47,7 +48,6 @@ const Organiser = () => {
       formData.append("registrationRequired", registrationRequired);
       formData.append("contact", contact);
       formData.append("personInCharge", personInCharge);
-
       eventCategories.forEach((cat) => formData.append("eventCategories[]", cat));
       eventTypes.forEach((type) => formData.append("eventTypes[]", type));
 
@@ -55,7 +55,7 @@ const Organiser = () => {
         formData.append("image", imageURL);
       }
 
-      const res = await fetch("http://localhost:4000/api/organiser/events", {
+      const res = await fetch(`${BACKEND_URL}/api/organiser/events`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -64,7 +64,6 @@ const Organiser = () => {
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         setMessage(data.message || "Failed to create event");
         setSubmitting(false);
@@ -145,7 +144,7 @@ const Organiser = () => {
 
             <Form.Group className="mb-3">
               <Form.Label>Event Image</Form.Label>
-              <Form.Control type="file" accept="image/*" onChange={(e) => setImageURL(e.target.files[0])}/>
+              <Form.Control type="file" accept="image/*" onChange={(e) => setImageURL(e.target.files[0])} />
               <Form.Text muted>Upload 1 image only</Form.Text>
             </Form.Group>
 
@@ -160,22 +159,22 @@ const Organiser = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Check type="checkbox" label="Registration Required" checked={registrationRequired} onChange={(e) => setRegistrationRequired(e.target.checked)}/>
+              <Form.Check type="checkbox" label="Registration Required" checked={registrationRequired} onChange={(e) => setRegistrationRequired(e.target.checked)} />
             </Form.Group>
 
-           <p className="note"><span className="note-label">Note:</span>  In order to reach the right audience, be clear with your selection of event's category & type.</p>
+            <p className="note"><span className="note-label">Note:</span>  In order to reach the right audience, be clear with your selection of event's category & type.</p>
 
             <Form.Group className="mb-3">
               <Form.Label>Event Categories</Form.Label>
               {["Technology", "Business", "Design", "Science", "Sports & Wellness", "Community Service", "TP Events (All Events in TP)"].map((cat) => (
-                <Form.Check key={cat} label={cat} checked={eventCategories.includes(cat)} onChange={() => handleCheckboxChange(cat, setEventCategories, eventCategories)}/>
+                <Form.Check key={cat} label={cat} checked={eventCategories.includes(cat)} onChange={() => handleCheckboxChange(cat, setEventCategories, eventCategories)} />
               ))}
             </Form.Group>
 
             <Form.Group className="mb-4">
               <Form.Label>Event Types</Form.Label>
               {["Workshops", "Competitions", "Talks & Seminar", "Career Events"].map((type) => (
-                <Form.Check key={type} label={type} checked={eventTypes.includes(type)} onChange={() => handleCheckboxChange(type, setEventTypes, eventTypes)}/>
+                <Form.Check key={type} label={type} checked={eventTypes.includes(type)} onChange={() => handleCheckboxChange(type, setEventTypes, eventTypes)} />
               ))}
             </Form.Group>
 

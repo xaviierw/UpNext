@@ -9,32 +9,43 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+
     password: {
       type: String,
       required: true,
     },
+
     username: {
       type: String,
       unique: false,
       required: true,
       trim: true,
     },
+
     personalized: {
       type: Boolean,
       default: false
     },
+
     eventTypes: {
       type: [String],
       default: [],
     },
+
     eventCategories: {
       type: [String],
       default: [],
     },
+
     role: {
       type: String,
       enum: ["student", "organiser", "admin"],
       default: "student",
+    },
+
+    xp: { 
+      type: Number, 
+      default: 0,
     }
   },
   { timestamps: true }

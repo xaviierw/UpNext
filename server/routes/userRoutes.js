@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import User from "../models/User.js";
 import EventRegistration from "../models/EventRegistration.js";
+import Bookmark from "../models/Bookmark.js";
 import Event from "../models/Event.js";
 import { authenticateToken, requireRole } from "../middleware/auth.js";
 
@@ -77,6 +78,32 @@ router.get("/me", authenticateToken, requireRole(["student"]), async (req, res) 
     return res.status(500).json({
       success: false,
       message: "Failed to retrieve user info",
+    });
+  }
+});
+
+// GET user profile page
+router.get("/users/me", authenticateToken, requireRole(["student"]), async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const user = await User.findById(userId).select(
+      "username email role eventTypes eventCategories xp"
+    );
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    res.json({
+      success: true,
+      user,
+    });
+  } catch (err) {
+    console.error("Get profile error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
     });
   }
 });
@@ -162,7 +189,6 @@ router.put("/registrations/:id/cancel", authenticateToken, requireRole(["student
       { status: 2 },
       { new: true }
     );
-
     if (!reg) {
       return res.status(404).json({
         success: false,
@@ -187,5 +213,73 @@ router.put("/registrations/:id/cancel", authenticateToken, requireRole(["student
     });
   }
 });
+
+// GET user bookmarked items
+router.get("/bookmarks", authenticateToken, requireRole(["student"]), async (req, res) => {
+  const userId = req.user.userId
+
+  try {
+    const bookmarks = await Bookmark.find({ user: userId })
+      .populate("event")
+      .sort({ createdAt: -1 })
+
+    const events = bookmarks
+      .filter((b) => b.event)
+      .map((b) => ({
+        bookmarkId: b._id,
+        createdAt: b.createdAt,
+        event: b.event,
+      }))
+
+    return res.status(200).json({
+      success: true,
+      bookmarks: events,
+    })
+  } catch (err) {
+    console.error("Get bookmarks error:", err)
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching bookmarks.",
+    })
+  }
+})
+
+// DELETE remove bookmark
+router.delete("/events/:eventId/bookmark", authenticateToken, requireRole(["student"]), async (req, res) => {
+  const { eventId } = req.params
+  const userId = req.user.userId
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid event ID.",
+      })
+    }
+
+    const deleted = await Bookmark.findOneAndDelete({
+      user: userId,
+      event: eventId,
+    })
+
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Bookmark not found.",
+      })
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Bookmark removed.",
+    })
+  } catch (err) {
+    console.error("Delete bookmark error:", err)
+    return res.status(500).json({
+      success: false,
+      message: "Server error while removing bookmark.",
+    })
+  }
+})
 
 export default router;

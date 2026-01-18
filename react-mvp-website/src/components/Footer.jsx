@@ -1,5 +1,4 @@
 // This componenet is being use on every page at the bottom
-
 import "./css/Footer.css";
 
 const Footer = () => {

@@ -8,9 +8,18 @@ import Event from "./pages/Event";
 import Manage from "./pages/Manage";
 import Organiser from "./pages/Organiser";
 import OrganiserEvent from "./pages/OrganiserEvent";
+import Profile from "./pages/Profile";
+import OrganiserAttendance from "./pages/OrganiserAttendance";
+import Bookmark from "./pages/Bookmark";
+import SearchResults from "./pages/SearchResults";
 import { Routes, Route, Navigate } from "react-router";
 import { jwtDecode } from "jwt-decode";
 import "bootstrap-icons/font/bootstrap-icons.css";
+
+const isExpired = (decoded) => {
+  if (!decoded?.exp) return true; 
+  return decoded.exp * 1000 < Date.now();
+};
 
 const StudentRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -18,9 +27,15 @@ const StudentRoute = ({ children }) => {
 
   try {
     const decoded = jwtDecode(token);
+    if (isExpired(decoded)) {
+      localStorage.removeItem("token");
+      return <Navigate to="/login" replace />;
+    }
+
     if (decoded.role !== "student") return <Navigate to="/organiser/event" replace />;
     return children;
   } catch {
+    localStorage.removeItem("token");
     return <Navigate to="/login" replace />;
   }
 };
@@ -31,9 +46,15 @@ const OrganiserRoute = ({ children }) => {
 
   try {
     const decoded = jwtDecode(token);
+    if (isExpired(decoded)) {
+      localStorage.removeItem("token");
+      return <Navigate to="/login" replace />;
+    }
+
     if (decoded.role !== "organiser") return <Navigate to="/" replace />;
     return children;
   } catch {
+    localStorage.removeItem("token");
     return <Navigate to="/login" replace />;
   }
 };
@@ -49,6 +70,10 @@ function App() {
       <Route path="/myevents" element={<StudentRoute><Manage /></StudentRoute>} />
       <Route path="/organiser/create" element={<OrganiserRoute><Organiser /></OrganiserRoute>} />
       <Route path="/organiser/event" element={<OrganiserRoute><OrganiserEvent /></OrganiserRoute>} />
+      <Route path="/organiser/events/:eventId/attendance" element={<OrganiserRoute><OrganiserAttendance /></OrganiserRoute>} />
+      <Route path="/profile" element={<StudentRoute><Profile /></StudentRoute>} />
+      <Route path="/bookmarks" element={<StudentRoute><Bookmark /></StudentRoute>} />
+      <Route path="/search" element={<StudentRoute><SearchResults /></StudentRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
