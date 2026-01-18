@@ -122,9 +122,9 @@ const Event = () => {
                 <h5 className="text-center">Details</h5>
                 <br />
                 <p><strong>Event Date:</strong>{" "}{formatDate(event.startDateTime)} - {formatDate(event.endDateTime)}</p>
-                <p><strong>Venue:</strong>{event.location ?? "TBA"}</p>
-                <p><strong>Person-in-Charge:</strong>{" "}{event.personInCharge ?? "TBA"}</p>
-                <p><strong>Contact:</strong>{event.contact ?? "TBA"}</p>
+                <p><strong>Venue: </strong>{event.location ?? "TBA"}</p>
+                <p><strong>Person-in-Charge: </strong>{" "}{event.personInCharge ?? "TBA"}</p>
+                <p><strong>Contact: </strong>{event.contact ?? "TBA"}</p>
                 <br />
                 <p><strong>Slots Left:</strong> {event.capacity}</p>
                 <p><strong>Registration Closing Date:</strong>{" "}{formatDate(event.registrationDeadline)}</p>

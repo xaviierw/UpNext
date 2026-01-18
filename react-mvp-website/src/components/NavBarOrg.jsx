@@ -11,12 +11,15 @@ const handleLogout = () => {
   window.location.href = "/login";     
 };
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
+
 const NavBarOrg = () => {
   return (
     <Navbar bg="light" expand="lg" fixed="top" className="shadow-sm">
       <Container fluid>
         
-        <Navbar.Brand as={Link} to="/"><img src="/icons/Upnext.png" alt="logo" style={{ height: "45px", width: "auto" }}/></Navbar.Brand>
+        <Navbar.Brand as={Link} to="/"><img src={`${BACKEND_URL}/icons/Upnext.png`} alt="logo" style={{ height: "45px", width: "auto" }}/></Navbar.Brand>
         <Navbar.Toggle aria-controls="upnext-nav" className="custom-collapse" />
         <Navbar.Collapse id="upnext-nav">
 
