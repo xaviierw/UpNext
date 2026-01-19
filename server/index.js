@@ -10,6 +10,7 @@ import userRoutes from "./routes/userRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import organiserRoutes from "./routes/organiserRoutes.js";
+import achievementRoutes from "./routes/organiserRoutes.js";
 import achievementRoutes from "./routes/achievementRoutes.js";
 
 const app = express();
@@ -18,26 +19,36 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "http://localhost:4000",
+  "https://upnextt.xyz",
   "https://www.upnextt.xyz",
 ];
 
-// SINGLE CORS middleware (NO duplicates)
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error("Not allowed by CORS"));
-  },
-  credentials: true,
-}));
+// ✅ CORS (single middleware)
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow server-to-server / curl / health checks (no Origin header)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+
+      // helpful for debugging
+      return callback(new Error(`Not allowed by CORS: ${origin}`));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// IMPORTANT: allow preflight requests
+app.options("*", cors());
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check (ALB)
+// Health check
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
@@ -58,7 +69,8 @@ app.use("/api", achievementRoutes);
 const port = process.env.PORT || 8080;
 
 // Start server AFTER MongoDB connects
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
 
@@ -71,7 +83,7 @@ mongoose.connect(process.env.MONGO_URI)
       console.log(`API listening on port ${port}`);
     });
   })
-  .catch(err => {
+  .catch((err) => {
     console.error("MongoDB connection error:", err);
     process.exit(1);
   });
