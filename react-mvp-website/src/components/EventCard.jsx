@@ -1,8 +1,8 @@
 // This componenet is use in the All Events and Personalized Events section in the home page
-
 import { Card, Badge } from "react-bootstrap";
 import "./css/EventCard.css";
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
 const EventCard = ({
   daysLeft = "xx Days left",
   image = "",
@@ -13,19 +13,18 @@ const EventCard = ({
   capacity = "<slots left>",
   onClick,
 }) => {
-  
-const imgSrc = image
-  ? image.startsWith("http")
-    ? image
-    : `http://localhost:4000${image}`
-  : "";
+  const imgSrc = image
+    ? image.startsWith("http")
+      ? image
+      : `${BACKEND_URL}${image}`
+    : "";
 
   return (
     <Card className="event-card shadow-sm" style={{ borderRadius: "12px" }} onClick={onClick}>
       <Badge className="days-left-badge" bg="primary">
         {daysLeft}
       </Badge>
-
+      
       <div className="event-card-img-wrapper">
         {imgSrc ? (
           <Card.Img variant="top" src={imgSrc} className="event-card-img"/>
@@ -44,8 +43,8 @@ const imgSrc = image
           <div className="tags-tooltip-wrapper mt-2">
             <span className="tags-pill">Tags</span>
             <div className="tags-tooltip">
-              {tags.map((tag, idx) => (<div key={idx} className="tooltip-tag">{tag}
-                </div>
+              {tags.map((tag, idx) => (
+                <div key={idx} className="tooltip-tag">{tag}</div>
               ))}
             </div>
           </div>

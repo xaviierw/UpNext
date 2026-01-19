@@ -2,18 +2,57 @@
 
 .event-carousel-wrapper {
   width: 100%;
-  max-width: 1000px;          
-  margin: 0 auto;             
+  max-width: 1000px;
+  margin: 0 auto;
   overflow-x: auto;
   padding-bottom: 8px;
+
+  padding-left: 12px;
+  padding-right: 12px;
+
+  -webkit-overflow-scrolling: touch;
+
+  scroll-snap-type: x mandatory;
 }
 
 .event-carousel-track {
   display: flex;
   gap: 16px;
   padding: 4px 4px 12px;
+
+  scroll-padding-left: 12px;
 }
 
 .event-carousel-item {
-  flex: 0 0 260px;           
+  flex: 0 0 260px;
+  scroll-snap-align: start;
+}
+
+@media (max-width: 575px) {
+  .event-carousel-wrapper {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .event-carousel-track {
+    gap: 12px;
+    padding: 4px 0 12px;
+  }
+
+  .event-carousel-item {
+    flex: 0 0 82%; 
+  }
+}
+
+@media (max-width: 360px) {
+  .event-carousel-item {
+    flex: 0 0 90%;
+  }
+}
+
+@media (min-width: 992px) {
+  .event-carousel-wrapper {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }

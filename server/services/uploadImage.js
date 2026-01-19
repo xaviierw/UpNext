@@ -12,6 +12,7 @@ const storage = multer.diskStorage({
   },
 });
 
+// currently the upload size is set to 2MB
 const uploadImage = multer({
   storage,
   limits: {fileSize: 2 * 1024 * 1024,
