@@ -3,6 +3,8 @@ import NavBar from "../components/NavBar";
 import EventCarousel from "../components/EventCarousel";
 import AllEventsGrid from "../components/AllEventsGrid";
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
+
 const Home = () => {
   const [personalizedEvents, setPersonalizedEvents] = useState([]);
   const [allEvents, setAllEvents] = useState([]);
@@ -11,8 +13,7 @@ const Home = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
-    fetch("http://localhost:4000/api/events/personalized", {
+    fetch(`${BACKEND_URL}/api/events/personalized`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then((res) => res.json())
       .then((data) => {
@@ -21,7 +22,7 @@ const Home = () => {
         console.error("Failed to load personalised events:", err)
       ).finally(() => setLoadingPersonalized(false));
 
-    fetch("http://localhost:4000/api/events", {
+    fetch(`${BACKEND_URL}/api/events`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then((res) => res.json())
       .then((data) => {

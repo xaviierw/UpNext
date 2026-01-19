@@ -2,36 +2,96 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import leoProfanity from "leo-profanity";
+import StudentEmail from "../models/StudentEmail.js";
 
 const router = express.Router();
 
-// Register (students only)
+// POST Register (students only)
 router.post("/register", async (req, res) => {
   try {
     const { email, username, password } = req.body;
     if (!email || !username || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    const existing = await User.findOne({ email });
+
+    const emailLower = email.toLowerCase().trim();
+    const usernameLower = username.toLowerCase().trim();
+
+    // TP student email only
+    if (!/^[a-zA-Z0-9._%+-]+@student\.tp\.edu\.sg$/.test(emailLower)) {
+      return res.status(400).json({ message: "Only @student.tp.edu.sg emails are allowed", });
+    }
+
+    // Allowlist check (Option B)
+    const allowed = await StudentEmail.findOne({ email: emailLower });
+    if (!allowed) {
+      return res.status(403).json({ message: "This student email is not in the approved list", });
+    }
+
+    if (allowed.used) {
+      return res.status(403).json({ message: "This student email has already been used to register", });
+    }
+
+    // Username basic format
+    if (!/^[a-zA-Z0-9._]{3,20}$/.test(username)) {
+      return res.status(400).json({ message:"Username must be 3–20 characters and contain only letters, numbers, dots or underscores", });
+    }
+
+    // Profanity check (normalize for simple leetspeak)
+    const normalizedUsername = usernameLower
+      .replace(/0/g, "o")
+      .replace(/1/g, "i")
+      .replace(/3/g, "e")
+      .replace(/4/g, "a")
+      .replace(/5/g, "s")
+      .replace(/7/g, "t")
+      .replace(/@/g, "a")
+      .replace(/\$/g, "s");
+
+    if (leoProfanity.check(normalizedUsername)) {
+      return res.status(400).json({ message: "Username contains inappropriate language", });
+    }
+
+    // Reserved system names
+    const reserved = ["admin", "support", "moderator", "staff", "system"];
+    if (reserved.some(r => normalizedUsername.includes(r))) {
+      return res.status(400).json({ message: "Username contains reserved terms. Cannot contain admin, support, etc.", });
+    }
+
+    // Password complexity
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/.test(password)) {
+      return res.status(400).json({ message: "Password must be at least 8 characters and include uppercase, lowercase, number and special character",});
+    }
+
+    // Existing user check
+    const existing = await User.findOne({ email: emailLower });
     if (existing) {
       return res.status(400).json({ message: "User already exists" });
     }
+
+    // Create user
     const hashed = await bcrypt.hash(password, 10);
-    const user = new User({
-      email,
+    const newUser = await User.create({
+      email: emailLower,
       username,
       password: hashed,
       role: "student",
     });
-    await user.save();
-    res.status(201).json({ message: "User registered" });
+
+    // Mark allowlist email as used
+    allowed.used = true;
+    allowed.usedAt = new Date();
+    allowed.usedBy = newUser._id;
+    await allowed.save();
+    return res.status(201).json({ message: "User registered" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
-// Login (student/organiser)
+// POST Login (student/organiser)
 router.post("/login", async (req, res) => {
   try {
     const { email, password, portal } = req.body; 

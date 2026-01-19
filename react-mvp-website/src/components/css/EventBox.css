@@ -8,11 +8,15 @@
   cursor: pointer;
   transition: 0.2s ease;
   color: #333;
+
+  -webkit-tap-highlight-color: transparent;
 }
 
-.event-box:hover {
-  border-color: #e4c2ff;
-  transform: translateY(-3px);
+@media (hover: hover) {
+  .event-box:hover {
+    border-color: #e4c2ff;
+    transform: translateY(-3px);
+  }
 }
 
 .event-icon {
@@ -22,7 +26,38 @@
   margin-bottom: 10px;
 }
 
+/* Selected state */
 .event-box.selected {
   border-color: #fff;
   background-color: #e4c2ff;
+}
+
+@media (max-width: 575px) {
+  .event-box {
+    padding: 14px;          
+    border-radius: 10px;
+    font-size: 14px;        
+  }
+
+  .event-icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 8px;
+  }
+
+  .event-box:active {
+    transform: scale(0.98);
+  }
+}
+
+@media (max-width: 360px) {
+  .event-box {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .event-icon {
+    width: 40px;
+    height: 40px;
+  }
 }

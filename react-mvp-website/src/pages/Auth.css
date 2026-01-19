@@ -42,11 +42,11 @@
 .loginForm input,
 .registerForm input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 12px 12px;
   margin-top: 6px;
   border-radius: 8px;
   border: 1px solid #d1d5db;
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
 }
 
@@ -60,7 +60,7 @@
 .registerForm button {
   width: 100%;
   margin-top: 10px;
-  padding: 10px;
+  padding: 12px;
   border-radius: 10px;
   border: none;
   background: #2563eb;
@@ -68,12 +68,23 @@
   font-weight: 600;
   font-size: 15px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.05s ease;
 }
 
 .loginForm button:hover,
 .registerForm button:hover {
   background: #1e40af;
+}
+
+.loginForm button:active,
+.registerForm button:active {
+  transform: scale(0.99);
+}
+
+.loginForm button:disabled,
+.registerForm button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .loginForm p,
@@ -88,7 +99,7 @@
 .registerForm p:first-of-type {
   margin-bottom: 12px;
   font-weight: 600;
-  color: #dc2626; 
+  color: #dc2626;
 }
 
 .loginForm a,
@@ -108,6 +119,7 @@
   justify-content: center;
   gap: 20px;
   margin-bottom: 18px;
+  flex-wrap: wrap;
 }
 
 .portal-toggle label {
@@ -122,6 +134,50 @@
 }
 
 .portal-toggle input[type="radio"] {
-  accent-color: #2563eb; 
+  accent-color: #2563eb;
   cursor: pointer;
+}
+
+.auth-message {
+  background: #fff3f3;
+  border: 1px solid #ffd1d1;
+  color: #b10000;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  margin: 0 0 12px;
+  text-align: center;
+}
+
+@media (max-width: 575px) {
+  .auth-page {
+    align-items: flex-start;
+    padding: 18px 12px;
+  }
+
+  .loginForm,
+  .registerForm {
+    padding: 18px 16px;
+    border-radius: 12px;
+  }
+
+  .portal-toggle {
+    gap: 10px;
+  }
+
+  .portal-toggle label {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #f9fafb;
+  }
+}
+
+@media (max-width: 360px) {
+  .loginForm,
+  .registerForm {
+    padding: 16px 14px;
+  }
 }

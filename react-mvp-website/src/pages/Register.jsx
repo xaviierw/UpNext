@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import "./Auth.css";
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
+
 const Register = () => {
   const [email, setEmail] = useState("");
   const [username, setUserName] = useState("");
@@ -14,14 +16,13 @@ const Register = () => {
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:4000/api/register", {
+      const res = await fetch(`${BACKEND_URL}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, username, password }),
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         setMessage(data.message || "Registration failed");
         return;
@@ -31,10 +32,13 @@ const Register = () => {
       setEmail("");
       setUserName("");
       setPassword("");
+
       setTimeout(() => {
         navigate("/login");
       }, 2500);
-    } catch (err) {setMessage("Server error. Try again later.");}
+    } catch (err) {
+      setMessage("Server error. Try again later.");
+    }
   }
 
   return (
@@ -48,22 +52,22 @@ const Register = () => {
           <div>
             <label>Email:</label>
             <br />
-            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required/>
+            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" inputMode="email" />
           </div>
 
           <div>
             <label>Username:</label>
             <br />
-            <input type="text" value={username} onChange={(event) => setUserName(event.target.value)} required/>
+            <input type="text" value={username} onChange={(event) => setUserName(event.target.value)} required autoComplete="username" />
           </div>
 
           <div>
             <label>Password:</label>
             <br />
-            <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required/>
+            <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="new-password" />
           </div>
 
-          <button type="submit">Register</button>
+          <button type="submit" disabled={!email || !username || !password}>Register</button>
 
           <p>Have an existing account? <Link to="/login">Login!</Link></p>
         </form>

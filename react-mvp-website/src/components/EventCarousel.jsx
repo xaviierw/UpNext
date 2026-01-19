@@ -7,7 +7,6 @@ import "./css/EventCarousel.css";
 const EventCarousel = ({ events = [] }) => {
 
   const navigate = useNavigate();
-
   const calculateDaysLeft = (deadline) => {
     if (!deadline) return "N/A";
     const today = new Date();
