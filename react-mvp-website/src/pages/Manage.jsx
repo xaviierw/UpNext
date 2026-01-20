@@ -3,7 +3,7 @@ import { Container, Table, Spinner, Alert, Badge, Button } from "react-bootstrap
 import { Link } from "react-router";
 import NavBar from "../components/NavBar";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 const Manage = () => {
   const [registrations, setRegistrations] = useState([]);
@@ -136,18 +136,19 @@ const Manage = () => {
                       reg.event?.title || "Unknown Event"
                     )}
                   </td>
+
                   <td>
                     <Badge bg={getStatusVariant(reg.status)}>{getStatusText(reg.status)}</Badge>
                   </td>
+
                   <td>
                     {reg.createdAt ? new Date(reg.createdAt).toLocaleString("en-SG") : "—"}
                   </td>
+
                   <td>{reg.wantsEmailReminder ? "Yes" : "No"}</td>
                   <td>{reg.wantsInAppReminder ? "Yes" : "No"}</td>
                   <td>
-                    <Button variant="outline-danger" size="sm" disabled={reg.status === 2} onClick={() => handleCancel(reg._id)}>
-                      {reg.status === 2 ? "Cancelled" : "Cancel"}
-                    </Button>
+                    <Button variant="outline-danger" size="sm" disabled={reg.status === 2} onClick={() => handleCancel(reg._id)}>{reg.status === 2 ? "Cancelled" : "Cancel"}</Button>
                   </td>
                 </tr>
               ))}

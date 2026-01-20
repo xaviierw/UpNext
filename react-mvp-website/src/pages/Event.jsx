@@ -4,7 +4,7 @@ import { Container, Row, Col, Card, Badge, Button } from "react-bootstrap";
 import NavBar from "../components/NavBar";
 import EventRegisterModal from "../components/EventRegisterModal";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 const Event = () => {
   const { id } = useParams();
@@ -75,11 +75,7 @@ const Event = () => {
   const registrationClosed =
     event.registrationDeadline && new Date(event.registrationDeadline) < new Date();
 
-  const imgSrc = event.imageURL
-    ? event.imageURL.startsWith("http")
-      ? event.imageURL
-      : `${BACKEND_URL}${event.imageURL}`
-    : "";
+  const imgSrc = event.imageURL ? event.imageURL.startsWith("http") ? event.imageURL : `${BACKEND_URL}${event.imageURL}` : "";
 
   return (
     <>
@@ -89,11 +85,7 @@ const Event = () => {
           <Col lg={8}>
             <Card className="shadow-sm border-0">
               {imgSrc && (
-                <Card.Img
-                  variant="top"
-                  src={imgSrc}
-                  style={{ maxHeight: "320px", objectFit: "cover" }}
-                />
+                <Card.Img variant="top" src={imgSrc} style={{ maxHeight: "320px", objectFit: "cover" }}/>
               )}
               <Card.Body>
                 <Card.Title>{event.title}</Card.Title>
@@ -102,16 +94,12 @@ const Event = () => {
                   {[...(event.eventCategories ?? []), ...(event.eventTypes ?? [])]
                     .filter(Boolean)
                     .map((tag) => (
-                      <Badge bg="light" text="dark" key={tag} className="me-2">
-                        #{tag}
-                      </Badge>
+                      <Badge bg="light" text="dark" key={tag} className="me-2">#{tag}</Badge>
                     ))}
                 </div>
 
                 <h5>Event Description</h5>
-                <Card.Text style={{ whiteSpace: "pre-line" }}>
-                  {event.description}
-                </Card.Text>
+                <Card.Text style={{ whiteSpace: "pre-line" }}>{event.description}</Card.Text>
               </Card.Body>
             </Card>
           </Col>
@@ -130,26 +118,19 @@ const Event = () => {
                 <p><strong>Registration Closing Date:</strong>{" "}{formatDate(event.registrationDeadline)}</p>
 
                 <Button variant="primary" className="w-100 rounded-pill mt-3" onClick={() => setShowRegisterModal(true)}disabled={registrationClosed || event.capacity <= 0}>
-                  {event.capacity <= 0
-                    ? "Event Full"
-                    : registrationClosed
-                    ? "Registration Closed"
-                    : "Register Now!"}
+                  {event.capacity <= 0 ? "Event Full" : registrationClosed ? "Registration Closed" : "Register Now!"}
                 </Button>
 
                 <Button variant={bookmarked ? "success" : "secondary"} className="w-100 rounded-pill mt-3" onClick={handleToggleBookmark}disabled={bookmarkLoading}>
                   {bookmarkLoading ? "Saving..." : bookmarked ? "Bookmarked" : "Bookmark"}
                 </Button>
+
               </Card.Body>
             </Card>
           </Col>
         </Row>
       </Container>
-      <EventRegisterModal
-        show={showRegisterModal}
-        onHide={() => setShowRegisterModal(false)}
-        event={event}
-      />
+      <EventRegisterModal show={showRegisterModal} onHide={() => setShowRegisterModal(false)} event={event}/>
     </>
   );
 };

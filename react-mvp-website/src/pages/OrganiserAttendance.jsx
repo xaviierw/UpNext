@@ -4,7 +4,7 @@ import { useNavigate } from "react-router"
 import { Container, Card, Table, Badge, Spinner, Alert, Button, Form } from "react-bootstrap"
 import NavBarOrg from "../components/NavBarOrg"
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 const formatDateTime = (date) => {
   if (!date) return "—"
@@ -150,7 +150,6 @@ const OrganiserAttendance = () => {
 
         {!loading && error && <Alert variant="danger">{error}</Alert>}
         {!loading && successMsg && <Alert variant="success">{successMsg}</Alert>}
-
         {!loading && !error && (
           <Card className="shadow-sm border-0" style={{ borderRadius: "12px" }}>
             <Card.Body>
@@ -165,15 +164,10 @@ const OrganiserAttendance = () => {
               )}
 
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <div className="text-muted">
-                  Showing: {filteredAttendance.length} / {attendance.length}
-                </div>
+                <div className="text-muted">Showing: {filteredAttendance.length} / {attendance.length}</div>
 
                 <div className="d-flex gap-2 align-items-center">
-                  <select
-                    className="form-select form-select-sm"
-                    style={{ width: "200px" }}
-                    value={filterStatus}
+                  <select className="form-select form-select-sm" style={{ width: "200px" }} value={filterStatus}
                     onChange={(e) => {
                       setFilterStatus(e.target.value)
                       setSelectedIds([])
@@ -185,7 +179,6 @@ const OrganiserAttendance = () => {
                     <option value="1">Attended</option>
                     <option value="2">Cancelled</option>
                   </select>
-
                   <Button variant="primary" size="sm" disabled={selectedIds.length === 0 || saving} onClick={markPresent}>{saving ? "Saving..." : `Mark Present (${selectedIds.length})`}</Button>
                 </div>
               </div>
@@ -234,7 +227,6 @@ const OrganiserAttendance = () => {
                   </tbody>
                 </Table>
               )}
-
               <div className="text-muted small mt-3">Note: Only <strong>Registered</strong> attendees can be marked present. Cancelled / Attended are disabled.</div>
             </Card.Body>
           </Card>

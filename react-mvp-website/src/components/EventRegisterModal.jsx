@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Modal, Button, Spinner } from "react-bootstrap";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 const EventRegisterModal = ({ show, onHide, event }) => {
   const [step, setStep] = useState(1); // 1 is review their personal information then 2 is terms and conditions afterwards its success message and set their preferences

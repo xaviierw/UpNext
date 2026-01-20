@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 import OrganiserAttendance from "./pages/OrganiserAttendance";
 import Bookmark from "./pages/Bookmark";
 import SearchResults from "./pages/SearchResults";
+import Rewards from "./pages/Rewards";
 import { Routes, Route, Navigate } from "react-router";
 import { jwtDecode } from "jwt-decode";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -74,6 +75,7 @@ function App() {
       <Route path="/profile" element={<StudentRoute><Profile /></StudentRoute>} />
       <Route path="/bookmarks" element={<StudentRoute><Bookmark /></StudentRoute>} />
       <Route path="/search" element={<StudentRoute><SearchResults /></StudentRoute>} />
+      <Route path="/rewards" element={<StudentRoute><Rewards /></StudentRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

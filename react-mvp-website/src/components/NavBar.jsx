@@ -11,7 +11,7 @@ const handleLogout = () => {
   window.location.href = "/login";
 };
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 const NavBar = () => {
   const [query, setQuery] = useState("");
@@ -27,9 +27,7 @@ const NavBar = () => {
   return (
     <Navbar bg="light" expand="lg" fixed="top" className="shadow-sm">
       <Container fluid>
-        <Navbar.Brand as={Link} to="/">
-          <img src={`${BACKEND_URL}/icons/Upnext.png`} alt="logo" style={{ height: "45px", width: "auto" }}/>
-        </Navbar.Brand>
+        <Navbar.Brand as={Link} to="/"><img src={`${BACKEND_URL}/icons/Upnext.png`} alt="logo" style={{ height: "45px", width: "auto" }}/></Navbar.Brand>
 
         <Navbar.Toggle aria-controls="upnext-nav" className="custom-collapse" />
 
@@ -41,13 +39,7 @@ const NavBar = () => {
           </Nav>
 
           <Form onSubmit={handleSearch} className="d-flex flex-grow-1 mx-lg-3 my-2 my-lg-0 nav-search-wrapper">
-            <FormControl
-              type="search"
-              placeholder="Search events..."
-              className="nav-search-input"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
+            <FormControl type="search" placeholder="Search events..." className="nav-search-input" value={query} onChange={(e) => setQuery(e.target.value)}/>
           </Form>
 
           <Nav className="custom-nav nav-right mt-2 mt-lg-0">

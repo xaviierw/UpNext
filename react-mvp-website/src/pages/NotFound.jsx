@@ -15,8 +15,8 @@ const NotFound = () => {
     return (
         <div style={{ textAlign: "center", marginTop: "80px" }}>
         <h2>404 – Page Not Found</h2>
+        <p>Page is under active development</p>
         <p>You will be redirected back to the previous page in 10 seconds.</p>
-
         <button onClick={() => navigate(-1)} style={{ marginTop: "16px", padding: "8px 16px", borderRadius: "20px", border: "none", backgroundColor: "#0d6efd", color: "#fff", cursor: "pointer",}}>Go Back</button>
         </div>
     );

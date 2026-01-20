@@ -96,7 +96,7 @@ router.get("/organiser/events/:eventId/attendance", authenticateToken, requireRo
         userId: r.user?._id || r.user,
         name: r.user?.username || "Unknown",
         email: r.user?.email || "Unknown",
-        status: r.status, // your enum: 0/1/2
+        status: r.status, // 0/1/2
         wantsEmailReminder: r.wantsEmailReminder,
         wantsInAppReminder: r.wantsInAppReminder,
         registeredAt: r.createdAt,
@@ -208,7 +208,7 @@ router.post("/organiser/events/:eventId/attendance/mark-present", authenticateTo
 
           if (result.upsertedCount > 0) {
             newlyUnlockedTotal += 1
-            await User.updateOne({ _id: uid }, { $inc: { xp: ach.xp } })
+            await User.updateOne({ _id: uid }, { $inc: { xp: ach.xp, xpBalance: ach.xp } })
           }
         }
       }
