@@ -221,7 +221,7 @@ router.post("/events/:eventId/register", authenticateToken, requireRole(["studen
       if (result.upsertedCount > 0) {
         await User.updateOne(
           { _id: userId },
-          { $inc: { xp: achievement.xp } }
+          { $inc: { xp: achievement.xp, xpBalance: achievement.xp } }
         );
       }
     }
@@ -241,7 +241,7 @@ router.post("/events/:eventId/register", authenticateToken, requireRole(["studen
   }
 });
 
-// Bookmark an event
+// Bookmark an event and get achievement
 router.post("/events/:eventId/bookmark", authenticateToken, requireRole(["student"]), async (req, res) => {
   const { eventId } = req.params
   const userId = req.user.userId
@@ -280,7 +280,7 @@ router.post("/events/:eventId/bookmark", authenticateToken, requireRole(["studen
       if (result.upsertedCount > 0) {
         await User.updateOne(
           { _id: userId },
-          { $inc: { xp: achievement.xp } }
+          { $inc: { xp: achievement.xp, xpBalance: achievement.xp } }
         )
       }
     }

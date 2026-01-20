@@ -8,6 +8,32 @@ import { authenticateToken, requireRole } from "../middleware/auth.js";
 
 const router = express.Router();
 
+const getLevelInfo = (xp = 0) => {
+  let level = 1;
+  let xpForThisLevel = 0;
+  let nextRequirement = 20;
+  let xpForNextLevel = nextRequirement;
+
+  while (xp >= xpForNextLevel) {
+    level += 1;
+    xpForThisLevel = xpForNextLevel;
+    nextRequirement += 10;
+    xpForNextLevel += nextRequirement;
+  }
+
+  const currentXp = xp - xpForThisLevel;
+  const needed = xpForNextLevel - xpForThisLevel;
+  const percent = Math.min(100, Math.round((currentXp / needed) * 100));
+
+  return {
+    level,
+    currentXp,
+    needed,
+    percent,
+    xpToNext: needed - currentXp,
+  };
+};
+
 // GET personalize info
 router.get("/personalize", authenticateToken, requireRole(["student"]), async (req, res) => {
   try {
@@ -87,7 +113,7 @@ router.get("/users/me", authenticateToken, requireRole(["student"]), async (req,
   try {
     const userId = req.user.userId;
     const user = await User.findById(userId).select(
-      "username email role eventTypes eventCategories xp"
+      "username email role eventTypes eventCategories xp xpBalance"
     );
     if (!user) {
       return res.status(404).json({
@@ -95,9 +121,13 @@ router.get("/users/me", authenticateToken, requireRole(["student"]), async (req,
         message: "User not found",
       });
     }
+
+    const levelInfo = getLevelInfo(user.xp || 0);
+
     res.json({
       success: true,
       user,
+      levelInfo,
     });
   } catch (err) {
     console.error("Get profile error:", err);

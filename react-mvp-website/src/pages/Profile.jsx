@@ -1,45 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router";
 import NavBar from "../components/NavBar";
 import { Container, Card, Spinner, Alert, ProgressBar, Button, Modal } from "react-bootstrap";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
+  const [levelInfo, setLevelInfo] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [allAchievements, setAllAchievements] = useState([]);
   const [earnedAchievements, setEarnedAchievements] = useState([]);
   const [loadingAchievements, setLoadingAchievements] = useState(true);
   const [error, setError] = useState("");
   const [showAchievementsModal, setShowAchievementsModal] = useState(false);
-
-  const getLevelInfo = (xp = 0) => {
-    let level = 1;
-    let xpForThisLevel = 0;
-    let nextRequirement = 20;
-    let xpForNextLevel = nextRequirement;
-
-    while (xp >= xpForNextLevel) {
-      level += 1;
-      xpForThisLevel = xpForNextLevel;
-      nextRequirement += 10;
-      xpForNextLevel += nextRequirement;
-    }
-
-    const currentXp = xp - xpForThisLevel;
-    const needed = xpForNextLevel - xpForThisLevel;
-    const percent = Math.min(100, Math.round((currentXp / needed) * 100));
-
-    return {
-      level,
-      currentXp,
-      needed,
-      percent,
-      xpToNext: needed - currentXp,
-    };
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -49,8 +26,10 @@ const Profile = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) setUser(data.user);
-        else setError(data.message || "Failed to load profile");
+        if (data.success) {
+          setUser(data.user);
+          setLevelInfo(data.levelInfo);
+        } else setError(data.message || "Failed to load profile");
       })
       .catch(() => setError("Server error"))
       .finally(() => setLoadingUser(false));
@@ -72,7 +51,6 @@ const Profile = () => {
       .finally(() => setLoadingAchievements(false));
   }, []);
 
-  const levelInfo = getLevelInfo(user?.xp || 0);
   const earnedSet = useMemo(() => {
     return new Set((earnedAchievements || []).map((a) => a.code || a._id));
   }, [earnedAchievements]);
@@ -88,10 +66,7 @@ const Profile = () => {
   const renderAchievements = (list) => (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
       {list.map((a) => (
-        <OverlayTrigger
-          key={a._id || a.code || a.title}
-          placement="top"
-          overlay={
+        <OverlayTrigger key={a._id || a.code || a.title} placement="top" overlay={
             <Tooltip>
               <strong>{a.title}</strong>
               <br />
@@ -105,24 +80,9 @@ const Profile = () => {
             </Tooltip>
           }
         >
-          <div
-            style={{
-              width: "90px",
-              textAlign: "center",
-              opacity: a.earned ? 1 : 0.35,
-              cursor: "pointer",
-            }}
-          >
-            <img
-              src={a.image ? `${BACKEND_URL}${a.image}` : ""}
-              alt={a.title}
-              style={{
-                width: "90px",
-                height: "90px",
-                borderRadius: "12px",
-                objectFit: "cover",
-                border: a.earned ? "2px solid #0d6efd" : "2px solid #ccc",
-              }}
+          <div style={{ width: "90px", textAlign: "center", opacity: a.earned ? 1 : 0.35, cursor: "pointer",}}>
+            <img src={a.image ? `${BACKEND_URL}${a.image}` : ""} alt={a.title}
+              style={{ width: "90px", height: "90px", borderRadius: "12px", objectFit: "cover", border: a.earned ? "2px solid #0d6efd" : "2px solid #ccc",}}
             />
             <small>{a.title}</small>
           </div>
@@ -138,48 +98,41 @@ const Profile = () => {
         <h3 className="mb-3">My Profile</h3>
 
         {(loadingUser || loadingAchievements) && (
-          <div className="text-center my-4">
-            <Spinner animation="border" />
-          </div>
+          <div className="text-center my-4"><Spinner animation="border" /></div>
         )}
 
         {error && <Alert variant="danger">{error}</Alert>}
-        {user && (
-          <Card className="shadow-sm mb-3" style={{ maxWidth: "700px" }}>
+        {user && levelInfo && (
+          <Card className="shadow-sm mb-3 w-100">
             <Card.Body>
               <p><strong>Name:</strong> {user.username}</p>
               <p><strong>Email:</strong> {user.email}</p>
               <p><strong>Role:</strong> {user.role}</p>
-              <div className="mt-3">
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",}}>
+                <div>
                   <strong>Level {levelInfo.level}</strong>
-                  <span>{user.xp || 0} XP Accumulated</span>
+                  <br />
                 </div>
 
-                <ProgressBar now={levelInfo.percent} label={`${levelInfo.currentXp}/${levelInfo.needed}`} className="mt-2" style={{ height: "18px", borderRadius: "10px" }}/>
-
-                <small className="text-muted"> {levelInfo.xpToNext} XP to Level {levelInfo.level + 1}</small>
+                <Button variant="outline-primary" size="sm" onClick={() => navigate("/rewards")}>Redeem Rewards</Button>
               </div>
+
+              <ProgressBar now={levelInfo.percent} label={`${levelInfo.currentXp}/${levelInfo.needed}`} className="mt-2" style={{ height: "18px", borderRadius: "10px" }}/>
+              <small className="text-muted">{levelInfo.xpToNext} XP to Level {levelInfo.level + 1} | </small>
+              <small className="text-muted">{user.xp || 0} XP Accumulated in Total</small>
+              <br />
+              <small className="text-muted">{user.xpBalance || 0} XP Available to Redeem</small>
             </Card.Body>
           </Card>
         )}
 
-        <Card className="shadow-sm" style={{ maxWidth: "700px" }}>
+        <Card className="shadow-sm w-100">
           <Card.Body>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",}}>
               <div>
                 <h5 className="mb-1">Achievements</h5>
-                <small className="text-muted">
-                  {earnedCount}/{mergedAchievements.length} unlocked
-                </small>
+                <small className="text-muted">{earnedCount}/{mergedAchievements.length} unlocked</small>
               </div>
-
               <Button variant="outline-primary" size="sm" onClick={() => setShowAchievementsModal(true)}>View All</Button>
             </div>
 
@@ -195,12 +148,7 @@ const Profile = () => {
           </Card.Body>
         </Card>
 
-        <Modal
-          show={showAchievementsModal}
-          onHide={() => setShowAchievementsModal(false)}
-          centered
-          size="lg"
-        >
+        <Modal show={showAchievementsModal} onHide={() => setShowAchievementsModal(false)} centered size="lg">
           <Modal.Header closeButton><Modal.Title>All Achievements</Modal.Title></Modal.Header>
 
           <Modal.Body>

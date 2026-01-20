@@ -16,9 +16,11 @@ const AllEventsGrid = ({ events = [] }) => {
     if (diffDays < 0) return "Closed";
     return `${diffDays} left till registration closes`;
   };
+  
   const handleClick = (eventId) => {
     navigate(`/event/${eventId}`);
   };
+
   const formatDate = (dateString) => {
     if (!dateString) return "—";
     return new Date(dateString).toLocaleDateString("en-SG", {day: "2-digit", month: "short", year: "numeric",}

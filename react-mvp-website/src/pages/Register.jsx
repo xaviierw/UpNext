@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import "./Auth.css";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -68,7 +68,6 @@ const Register = () => {
           </div>
 
           <button type="submit" disabled={!email || !username || !password}>Register</button>
-
           <p>Have an existing account? <Link to="/login">Login!</Link></p>
         </form>
       </div>

@@ -9,6 +9,7 @@ import eventRoutes from "./routes/eventRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import organiserRoutes from "./routes/organiserRoutes.js";
 import achievementRoutes from "./routes/achievementRoutes.js";
+import rewardRoutes from "./routes/rewardRoutes.js"
 
 const app = express();
 
@@ -16,6 +17,8 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "http://localhost:4000",
+  "https://upnextt.xyz",
+  "https://www.upnextt.xyz",
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
@@ -40,6 +43,7 @@ app.use("/api", eventRoutes);
 app.use("/api", notificationRoutes);
 app.use("/api", organiserRoutes);
 app.use("/api", achievementRoutes);
+app.use("/api", rewardRoutes);
 
 const port = process.env.PORT || 4000;
 

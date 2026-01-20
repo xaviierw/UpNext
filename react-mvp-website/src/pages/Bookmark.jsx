@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, Badge, Spinner, Alert, Button } from "react-
 import { useNavigate } from "react-router"
 import NavBar from "../components/NavBar"
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 const formatDateTime = (date) => {
   if (!date) return "—"
@@ -21,8 +21,8 @@ const Bookmark = () => {
       try {
         setLoading(true)
         setError("")
-        const token = localStorage.getItem("token")
 
+        const token = localStorage.getItem("token")
         const res = await fetch(`${BACKEND_URL}/api/bookmarks`, {
           headers: { Authorization: `Bearer ${token}` },
         })
@@ -99,25 +99,13 @@ const Bookmark = () => {
               const event = b.event
               if (!event) return null
 
-              const imgSrc = event.imageURL
-                ? event.imageURL.startsWith("http")
-                  ? event.imageURL
-                  : `${BACKEND_URL}${event.imageURL}`
-                : ""
+              const imgSrc = event.imageURL ? event.imageURL.startsWith("http") ? event.imageURL : `${BACKEND_URL}${event.imageURL}` : ""
 
               return (
                 <Col key={b.bookmarkId} xs={12} md={6} lg={4}>
-                  <Card
-                    className="shadow-sm h-100"
-                    style={{ borderRadius: "12px", cursor: "pointer" }}
-                    onClick={() => navigate(`/event/${event._id}`)}
-                  >
+                  <Card className="shadow-sm h-100" style={{ borderRadius: "12px", cursor: "pointer" }} onClick={() => navigate(`/event/${event._id}`)}>
                     {imgSrc && (
-                      <Card.Img
-                        variant="top"
-                        src={imgSrc}
-                        style={{ height: "180px", objectFit: "cover" }}
-                      />
+                      <Card.Img variant="top" src={imgSrc} style={{ height: "180px", objectFit: "cover" }}/>
                     )}
 
                     <Card.Body>
@@ -127,7 +115,6 @@ const Bookmark = () => {
                       <div className="mb-2">{formatDateTime(event.startDateTime)}</div>
                       <div className="small text-muted">Saved On</div>
                       <div>{formatDateTime(b.createdAt)}</div>
-
                       <Button variant="outline-danger" size="sm" className="mt-3" onClick={(e) => {e.stopPropagation()
                           handleRemove(event._id)
                         }}>Remove</Button>

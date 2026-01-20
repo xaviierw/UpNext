@@ -4,7 +4,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import NavBar from "../components/NavBar";
 import EventCard from "../components/EventCard";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 const SearchResults = () => {
   const location = useLocation();
