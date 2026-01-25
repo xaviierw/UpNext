@@ -119,6 +119,7 @@ router.get("/organiser/events/:eventId/attendance", authenticateToken, requireRo
   }
 )
 
+// POST student as present
 router.post("/organiser/events/:eventId/attendance/mark-present", authenticateToken, requireRole(["organiser"]), async (req, res) => {
     try {
       const { eventId } = req.params
@@ -180,6 +181,9 @@ router.post("/organiser/events/:eventId/attendance/mark-present", authenticateTo
         { code: "FIRST_ATTEND", min: 1 },
         { code: "PROGRESS", min: 5 },
         { code: "SUMMIT", min: 10 },
+        { code: "CONQUEROR", min: 20},
+        { code: "COSMIC_VOYAGER", min: 50},
+        { code: "67", min: 67},
       ]
 
       const achievements = await Achievement.find({
