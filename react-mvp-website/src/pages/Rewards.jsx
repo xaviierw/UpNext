@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import NavBar from "../components/NavBar";
-import { Container, Card, Spinner, Alert, Button, Modal, Row, Col, Badge, } from "react-bootstrap";
+import { Container, Card, Spinner, Alert, Button, Modal, Row, Col, Badge } from "react-bootstrap";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
+import "./Rewards.css";
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -61,6 +62,22 @@ const Rewards = () => {
       redeemed: redeemedSet.has(r.code || r._id),
     }));
   }, [rewards, redeemedSet]);
+
+  const sortedRewards = useMemo(() => {
+    const rank = (r) => {
+      const outOfStock = r.stock === 0;
+      if (!r.redeemed && !outOfStock) return 0; // not redeemed
+      if (r.redeemed) return 1;                 // redeemed
+      return 2;                                 // fully redeemed
+    };
+
+    return [...mergedRewards].sort((a, b) => {
+      const ra = rank(a);
+      const rb = rank(b);
+      if (ra !== rb) return ra - rb;
+      return (a.title || "").localeCompare(b.title || "");
+    });
+  }, [mergedRewards]);
 
   const redeemedCount = mergedRewards.filter((r) => r.redeemed).length;
 
@@ -160,7 +177,7 @@ const Rewards = () => {
         return (
           <Col key={r._id || r.code || r.title}>
             <Card className="shadow-sm h-100">
-              <div style={{ padding: "12px" }}>
+              <div className="rewardCardInner">
                 <OverlayTrigger placement="top" overlay={
                     <Tooltip>
                       <strong>{r.title}</strong>
@@ -173,23 +190,21 @@ const Rewards = () => {
                     </Tooltip>
                   }
                 >
-                  <div style={{ cursor: "pointer" }}>
-                    <img src={r.image ? `${BACKEND_URL}${r.image}` : ""} alt={r.title}
-                      style={{ width: "100%", height: "160px", borderRadius: "12px", objectFit: "cover", border: r.redeemed ? "2px solid #198754" : "2px solid #ddd", opacity: r.redeemed ? 1 : outOfStock ? 0.6 : 1,}}
-                    />
+                  <div className="rewardImgWrapper">
+                    <img src={r.image ? `${BACKEND_URL}${r.image}` : ""} alt={r.title} className={`rewardImg ${r.redeemed ? "redeemed" : ""} ${outOfStock ? "outOfStock" : ""}`}/>
                   </div>
                 </OverlayTrigger>
 
                 <div className="mt-2 d-flex justify-content-between align-items-start">
                   <div>
-                    <div style={{ fontWeight: 600 }}>{r.title}</div>
-                    <small className="text-muted">{r.costXp} XP</small>
+                    <div className="rewardTitle">{r.title}</div>
+                    <small className="text-muted">{r.costXp} UN Points</small>
                   </div>
 
                   {r.redeemed ? (
                     <Badge bg="success">Redeemed</Badge>
                   ) : outOfStock ? (
-                    <Badge bg="secondary">Out</Badge>
+                    <Badge bg="secondary">Fully Redeemed</Badge>
                   ) : (
                     <Badge bg="primary">Redeem</Badge>
                   )}
@@ -198,7 +213,7 @@ const Rewards = () => {
                 <div className="mt-2 d-flex justify-content-between align-items-center">
                   <small className="text-muted">{r.stock === -1 ? "Unlimited" : `Stock: ${r.stock}`}</small>
 
-                  <Button variant={r.redeemed ? "outline-success" : "primary"} size="sm" style={{ borderRadius: "10px", paddingLeft: "14px", paddingRight: "14px", fontWeight: 600 }} disabled={r.redeemed || outOfStock || redeemingId === r._id} onClick={() => redeemReward(r._id)}>
+                  <Button variant={r.redeemed ? "outline-success" : "primary"} size="sm" className="redeemBtn" disabled={r.redeemed || outOfStock || redeemingId === r._id} onClick={() => redeemReward(r._id)}>
                     {redeemingId === r._id ? (
                       <>
                         <Spinner size="sm" animation="border" className="me-2" />
@@ -228,23 +243,23 @@ const Rewards = () => {
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div>
             <h3 className="mb-1">Rewards Booth</h3>
-            <small className="text-muted">Redeem your XP for rewards</small>
+            <small className="text-muted">Redeem your UN points for rewards</small>
           </div>
 
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontWeight: 700 }}>{myXp} XP</div>
+          <div className="xpBox">
+            <div className="xpValue">{myXp} UN Points</div>
             <small className="text-muted">Available</small>
           </div>
         </div>
 
-        <div className="mb-3" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div className="rewardsTopBtns">
           <Button variant="outline-secondary" size="sm" onClick={() => window.history.back()}>Back</Button>
           <Button variant="outline-primary" size="sm" onClick={openMyCodes}>My Codes</Button>
         </div>
 
         {(loadingUser || loadingRewards) && (
           <div className="text-center my-4">
-            <Spinner animation="border" />
+<Spinner animation="border" />
           </div>
         )}
 
@@ -269,14 +284,15 @@ const Rewards = () => {
             ) : mergedRewards.length === 0 ? (
               <p className="mb-0">No rewards configured yet</p>
             ) : (
-              renderRewards(mergedRewards.slice(0, 6))
+              renderRewards(sortedRewards.slice(0, 6))
             )}
           </Card.Body>
         </Card>
 
         <Modal show={showAllRewardsModal} onHide={() => setShowAllRewardsModal(false)} centered size="lg">
-
-          <Modal.Header closeButton><Modal.Title>All Rewards</Modal.Title></Modal.Header>
+          <Modal.Header closeButton>
+            <Modal.Title>All Rewards</Modal.Title>
+          </Modal.Header>
 
           <Modal.Body>
             {loadingRewards ? (
@@ -286,7 +302,7 @@ const Rewards = () => {
             ) : mergedRewards.length === 0 ? (
               <p className="mb-0">No rewards configured yet</p>
             ) : (
-              renderRewards(mergedRewards)
+              renderRewards(sortedRewards)
             )}
           </Modal.Body>
 
@@ -296,7 +312,9 @@ const Rewards = () => {
         </Modal>
 
         <Modal show={showMyCodesModal} onHide={() => setShowMyCodesModal(false)} centered>
-          <Modal.Header closeButton><Modal.Title>My Voucher Codes</Modal.Title></Modal.Header>
+          <Modal.Header closeButton>
+            <Modal.Title>My Voucher Codes</Modal.Title>
+          </Modal.Header>
 
           <Modal.Body>
             {loadingCodes ? (
@@ -306,30 +324,36 @@ const Rewards = () => {
             ) : (myCodes || []).length === 0 ? (
               <p className="mb-0">No codes yet. Redeem a reward to get a code.</p>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <div className="codesList">
                 {myCodes.map((c) => (
                   <Card key={(c.rewardId || "") + (c.redeemCode || "")} className="shadow-sm">
-                    <Card.Body style={{ padding: "12px" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+                    <Card.Body className="codeCardBody">
+                      <div className="codeHeaderRow">
                         <div>
-                          <div style={{ fontWeight: 700 }}>{c.title || "Reward"}</div>
+                          <div className="codeTitle">{c.title || "Reward"}</div>
                           <small className="text-muted">{c.code || ""}</small>
                         </div>
                         <Badge bg="dark">Code</Badge>
                       </div>
 
-                      <div style={{ marginTop: "8px", fontFamily: "monospace", fontSize: "16px", fontWeight: 700 }}>
-                        {c.redeemCode}
-                      </div>
+                      <div className="redeemCodeText">{c.redeemCode}</div>
 
-                      <small className="text-muted">Redeemed: {c.redeemedAt ? new Date(c.redeemedAt).toLocaleString("en-SG", { timeZone: "Asia/Singapore" }) : "-"}</small>
+                      <small className="text-muted">
+                        Redeemed:{" "}
+                        {c.redeemedAt
+                          ? new Date(c.redeemedAt).toLocaleString("en-SG", { timeZone: "Asia/Singapore" })
+                          : "-"}
+                      </small>
                     </Card.Body>
                   </Card>
                 ))}
               </div>
             )}
           </Modal.Body>
-          <Modal.Footer><Button variant="secondary" onClick={() => setShowMyCodesModal(false)}>Close</Button></Modal.Footer>
+
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowMyCodesModal(false)}>Close</Button>
+          </Modal.Footer>
         </Modal>
       </Container>
     </>

@@ -95,7 +95,7 @@ router.post("/rewards/:rewardId/redeem", authenticateToken, requireRole(["studen
 
       return res.status(400).json({
         success: false,
-        message: "Not enough XP to redeem this reward.",
+        message: "Not enough UN Points to redeem this reward.",
       });
     }
 
