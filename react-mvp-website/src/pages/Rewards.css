@@ -1,0 +1,77 @@
+.xpBox {
+  text-align: right;
+}
+
+.xpValue {
+  font-weight: 700;
+}
+
+.rewardsTopBtns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.rewardCardInner {
+  padding: 12px;
+}
+
+.rewardImgWrapper {
+  cursor: pointer;
+}
+
+.rewardImg {
+  width: 100%;
+  height: 160px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid #ddd;
+  opacity: 1;
+}
+
+.rewardImg.redeemed {
+  border: 2px solid #198754;
+}
+
+.rewardImg.outOfStock {
+  opacity: 0.6;
+}
+
+.rewardTitle {
+  font-weight: 600;
+}
+
+.redeemBtn {
+  border-radius: 10px;
+  padding-left: 14px;
+  padding-right: 14px;
+  font-weight: 600;
+}
+
+.codesList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.codeCardBody {
+  padding: 12px;
+}
+
+.codeHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+
+.codeTitle {
+  font-weight: 700;
+}
+
+.redeemCodeText {
+  margin-top: 8px;
+  font-family: monospace;
+  font-size: 16px;
+  font-weight: 700;
+}

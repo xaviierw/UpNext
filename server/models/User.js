@@ -46,7 +46,12 @@ const userSchema = new mongoose.Schema(
     xp: { 
       type: Number, 
       default: 0,
-    }
+    },
+
+    xpBalance: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

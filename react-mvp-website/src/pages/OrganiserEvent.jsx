@@ -3,7 +3,7 @@ import { useNavigate } from "react-router"
 import { Container, Row, Col, Card, Badge, Spinner, Alert, Button } from "react-bootstrap"
 import NavBarOrg from "../components/NavBarOrg"
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || "https://api.upnextt.xyz";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 const formatDateTime = (date) => {
   if (!date) return "—"
@@ -80,20 +80,14 @@ const OrganiserEvent = () => {
                 <Card className="shadow-sm h-100" style={{ borderRadius: "12px" }}>
                   <Card.Body>
                     <div className="d-flex justify-content-between align-items-start">
-                      <Card.Title className="mb-2" style={{ fontSize: "1.05rem" }}>
-                        {event.title || "Untitled Event"}
-                      </Card.Title>
+                      <Card.Title className="mb-2" style={{ fontSize: "1.05rem" }}>{event.title || "Untitled Event"}</Card.Title>
 
                       {event.status !== undefined && (
-                        <Badge bg={event.status === 1 ? "success" : "secondary"}>
-                          {event.status === 1 ? "Approved" : "Pending"}
-                        </Badge>
+                        <Badge bg={event.status === 1 ? "success" : "secondary"}>{event.status === 1 ? "Approved" : "Pending"}</Badge>
                       )}
                     </div>
 
-                    <Card.Text className="text-muted mb-2">
-                      {event.location || "No location"}
-                    </Card.Text>
+                    <Card.Text className="text-muted mb-2">{event.location || "No location"}</Card.Text>
 
                     <div className="mb-2">
                       <div className="small text-muted">Start</div>

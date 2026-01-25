@@ -221,7 +221,7 @@ router.post("/events/:eventId/register", authenticateToken, requireRole(["studen
       if (result.upsertedCount > 0) {
         await User.updateOne(
           { _id: userId },
-          { $inc: { xp: achievement.xp } }
+          { $inc: { xp: achievement.xp, xpBalance: achievement.xp } }
         );
       }
     }
@@ -241,12 +241,12 @@ router.post("/events/:eventId/register", authenticateToken, requireRole(["studen
   }
 });
 
-// Bookmark an event
+// Bookmark an event and get achievement
 router.post("/events/:eventId/bookmark", authenticateToken, requireRole(["student"]), async (req, res) => {
-  const { eventId } = req.params
-  const userId = req.user.userId
-
   try {
+    const { eventId } = req.params
+    const userId = req.user.userId
+
     if (!mongoose.Types.ObjectId.isValid(eventId)) {
       return res.status(400).json({
         success: false,
@@ -262,25 +262,47 @@ router.post("/events/:eventId/bookmark", authenticateToken, requireRole(["studen
       })
     }
 
+    // 1) Create bookmark
     const bookmark = await Bookmark.create({
       user: userId,
       event: eventId,
     })
 
-    // Unlock BOOKMARK achievement + give XP (only once)
-    const achievement = await Achievement.findOne({ code: "BOOKMARK" })
+    // 2) Compute bookmark count for this user
+    const bookmarkCount = await Bookmark.countDocuments({ user: userId })
 
-    if (achievement) {
+    // 3) Achievements to award based on bookmark count
+    const achievementCodes = [
+      { code: "BOOKMARK", min: 1 },
+      { code: "BOOKMARK_5", min: 5 },
+    ]
+
+    const achievements = await Achievement.find({
+      code: { $in: achievementCodes.map((a) => a.code) },
+    }).select("_id code xp")
+
+    const achievementByCode = new Map(achievements.map((a) => [a.code, a]))
+
+    // 4) Upsert achievements once, add XP only when newly unlocked
+    let newlyUnlockedTotal = 0
+
+    for (const rule of achievementCodes) {
+      if (bookmarkCount < rule.min) continue
+
+      const ach = achievementByCode.get(rule.code)
+      if (!ach) continue
+
       const result = await UserAchievement.updateOne(
-        { user: userId, achievement: achievement._id },
-        { $setOnInsert: { user: userId, achievement: achievement._id } },
+        { user: userId, achievement: ach._id },
+        { $setOnInsert: { user: userId, achievement: ach._id } },
         { upsert: true }
       )
 
       if (result.upsertedCount > 0) {
+        newlyUnlockedTotal += 1
         await User.updateOne(
           { _id: userId },
-          { $inc: { xp: achievement.xp } }
+          { $inc: { xp: ach.xp, xpBalance: ach.xp } }
         )
       }
     }
@@ -289,6 +311,7 @@ router.post("/events/:eventId/bookmark", authenticateToken, requireRole(["studen
       success: true,
       message: "Bookmarked successfully.",
       bookmark,
+      newlyUnlockedAchievements: newlyUnlockedTotal,
     })
   } catch (err) {
     if (err.code === 11000) {
@@ -298,7 +321,7 @@ router.post("/events/:eventId/bookmark", authenticateToken, requireRole(["studen
       })
     }
 
-    console.error("Bookmark event error:", err)
+    console.error("Bookmark event + achievements error:", err)
     return res.status(500).json({
       success: false,
       message: "Server error while bookmarking event.",
